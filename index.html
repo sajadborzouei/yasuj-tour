@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تور مجازی ثبت‌نام - دانشگاه علوم پزشکی یاسوج</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    
+    <style>
+        body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
+        #panorama { width: 100vw; height: 100vh; }
+        
+        /* استایل نقشه کوچک */
+        #minimap-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 160px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            z-index: 1000;
+            overflow: hidden;
+            background: #333;
+        }
+        #minimap-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+        #marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #ff0000;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.8s ease;
+            top: 90%; left: 10%; /* مختصات اولیه */
+        }
+        #hint {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-size: 12px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hint">برای انتخاب مسیر، روی فلش‌ها کلیک کنید</div>
+
+<div id="panorama"></div>
+
+<!-- نقشه تعاملی -->
+<div id="minimap-container">
+    <img src="map.jpg" id="minimap-image" alt="نقشه">
+    <div id="marker"></div>
+</div>
+
+<script>
+    var viewer = pannellum.viewer('panorama', {
+        "default": {
+            "firstScene": "scene1",
+            "sceneFadeDuration": 1000,
+            "autoLoad": true,
+            "showControls": true
+        },
+        "scenes": {
+            "scene1": {
+                "title": "۱. بیرون ورودی پردیس",
+                "type": "equirectangular",
+                "panorama": "01_outside_entrance.jpg",
+                "yaw": 0,
+                "hotSpots": [{
+                    "pitch": -5, "yaw": 50, 
+                    "type": "scene", "text": "ورود به محوطه",
+                    "sceneId": "scene2"
+                }]
+            },
+            "scene2": {
+                "title": "۲. داخل ورودی پردیس",
+                "type": "equirectangular",
+                "panorama": "02_inside_entrance.jpg",
+                "yaw": 0,
+                "hotSpots": [
+                    { "pitch": -5, "yaw": 60, "type": "scene", "text": "مسیر ثبت‌نام", "sceneId": "scene3" },
+                    { "pitch": -5, "yaw": -60, "type": "scene", "text": "مسیر سلف سرویس", "sceneId": "cafeteria1" },
+                    { "pitch": -5, "yaw": 120, "type": "scene", "text": "مسیر دانشکده‌ها", "sceneId": "faculty1" }
+                ]
+            },
+            "scene3": {
+                "title": "۳. مسیر ثبت‌نام ۱",
+                "type": "equirectangular",
+                "panorama": "03_reg_path_1.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 70, "type": "scene", "text": "ادامه", "sceneId": "scene4" }]
+            },
+            "scene4": {
+                "title": "۴. مسیر ثبت‌نام ۲",
+                "type": "equirectangular",
+                "panorama": "04_reg_path_2.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 80, "type": "scene", "text": "ادامه", "sceneId": "scene5" }]
+            },
+            "scene5": {
+                "title": "۵. مسیر ثبت‌نام ۳",
+                "type": "equirectangular",
+                "panorama": "05_reg_path_3.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 90, "type": "scene", "text": "ادامه", "sceneId": "scene6" }]
+            },
+            "scene6": {
+                "title": "۶. مسیر ثبت‌نام ۴",
+                "type": "equirectangular",
+                "panorama": "06_reg_path_4.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 100, "type": "scene", "text": "ادامه", "sceneId": "scene7" }]
+            },
+            "scene7": {
+                "title": "۷. مسیر ثبت‌نام ۵",
+                "type": "equirectangular",
+                "panorama": "07_reg_path_5.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 110, "type": "scene", "text": "ادامه", "sceneId": "scene8" }]
+            },
+            "scene8": {
+                "title": "۸. مسیر ثبت‌نام ۶",
+                "type": "equirectangular",
+                "panorama": "08_reg_path_6.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 120, "type": "scene", "text": "رسیدن به کتابخانه", "sceneId": "scene10" }]
+            },
+            "scene10": {
+                "title": "۹. سالن ساختمان کتابخانه",
+                "type": "equirectangular",
+                "panorama": "10_library_hall.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 130, "type": "scene", "text": "مسیر اتاق ثبت‌نام", "sceneId": "scene11" }]
+            },
+            "scene11": {
+                "title": "۱۰. مسیر اتاق ثبت‌نام",
+                "type": "equirectangular",
+                "panorama": "11_reg_room_path_1.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 140, "type": "scene", "text": "ورود به اتاق", "sceneId": "scene13" }]
+            },
+            "scene13": {
+                "title": "۱۱. اتاق ثبت‌نام (مقصد)",
+                "type": "equirectangular",
+                "panorama": "13_registration_room.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "به اتاق ثبت‌نام خوش آمدید. مدارک خود را آماده کنید." }]
+            },
+            "cafeteria1": {
+                "title": "۱۲. مسیر سلف سرویس ۱",
+                "type": "equirectangular",
+                "panorama": "14_cafeteria_path_1.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 50, "type": "scene", "text": "ادامه", "sceneId": "cafeteria2" }]
+            },
+            "cafeteria2": {
+                "title": "۱۳. مسیر سلف سرویس ۲",
+                "type": "equirectangular",
+                "panorama": "15_cafeteria_path_2.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 60, "type": "scene", "text": "ادامه", "sceneId": "cafeteria3" }]
+            },
+            "cafeteria3": {
+                "title": "۱۴. مسیر سلف سرویس ۳",
+                "type": "equirectangular",
+                "panorama": "16_cafeteria_path_3.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "شما به سلف سرویس رسیدید." }]
+            },
+            "faculty1": {
+                "title": "۱۵. مسیر دانشکده‌ها ۱",
+                "type": "equirectangular",
+                "panorama": "17_faculties_path_1.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 70, "type": "scene", "text": "ادامه", "sceneId": "faculty2" }]
+            },
+            "faculty2": {
+                "title": "۱۶. مسیر دانشکده ۲",
+                "type": "equirectangular",
+                "panorama": "18_faculties_path_2.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": -5, "yaw": 80, "type": "scene", "text": "ورود به ساختمان", "sceneId": "faculty3" }]
+            },
+            "faculty3": {
+                "title": "۱۷. داخل ساختمان دانشکده",
+                "type": "equirectangular",
+                "panorama": "20_inside_faculty.jpg",
+                "yaw": 0,
+                "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "شما داخل ساختمان دانشکده هستید." }]
+            }
+        }
+    });
+
+    // تنظیمات مختصات برای جابه‌جایی نقطه روی نقشه
+    const mapCoordinates = {
+        'scene1': { top: '85%', left: '15%' },
+        'scene2': { top: '80%', left: '20%' },
+        'scene3': { top: '75%', left: '25%' },
+        'scene4': { top: '70%', left: '30%' },
+        'scene5': { top: '65%', left: '35%' },
+        'scene6': { top: '60%', left: '40%' },
+        'scene7': { top: '55%', left: '45%' },
+        'scene8': { top: '50%', left: '50%' },
+        'scene10': { top: '45%', left: '55%' },
+        'scene11': { top: '40%', left: '60%' },
+        'scene13': { top: '35%', left: '65%' },
+        'cafeteria1': { top: '70%', left: '70%' },
+        'cafeteria2': { top: '60%', left: '75%' },
+        'cafeteria3': { top: '50%', left: '80%' },
+        'faculty1': { top: '60%', left: '20%' },
+        'faculty2': { top: '50%', left: '10%' },
+        'faculty3': { top: '40%', left: '5%' }
+    };
+
+    viewer.on('scenechange', function(sceneId) {
+        const coords = mapCoordinates[sceneId];
+        if (coords) {
+            const marker = document.getElementById('marker');
+            marker.style.top = coords.top;
+            marker.style.left = coords.left;
+        }
+    });
+</script>
+
+</body>
+</html>
