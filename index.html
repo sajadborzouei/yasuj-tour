@@ -1,3 +1,72 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تور مجازی ثبت‌نام - دانشگاه علوم پزشکی یاسوج</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    
+    <style>
+        body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
+        #panorama { width: 100vw; height: 100vh; }
+        
+        /* استایل نقشه کوچک */
+        #minimap-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 160px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            z-index: 1000;
+            overflow: hidden;
+            background: #333;
+        }
+        #minimap-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+        }
+        #marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #ff0000;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.8s ease;
+            top: 90%; left: 10%;
+        }
+        #hint {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            font-size: 12px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hint">برای انتخاب مسیر، روی فلش‌ها کلیک کنید</div>
+
+<div id="panorama"></div>
+
+<!-- نقشه تعاملی -->
+<div id="minimap-container">
+    <img src="map.jpg" id="minimap-image" alt="نقشه">
+    <div id="marker"></div>
+</div>
+
 <script>
     var viewer = pannellum.viewer('panorama', {
         "default": {
@@ -24,13 +93,11 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": 0,
                 "hotSpots": [
-                    // دکمه‌های انتخاب مسیر
                     { "pitch": -5, "yaw": 60, "type": "scene", "text": "🔴 مسیر ثبت‌نام", "sceneId": "reg1" },
                     { "pitch": -5, "yaw": -60, "type": "scene", "text": "🟡 مسیر سلف سرویس", "sceneId": "cafe1" },
                     { "pitch": -5, "yaw": 120, "type": "scene", "text": "🟢 مسیر دانشکده‌ها", "sceneId": "fac1" }
                 ]
             },
-            // --- مسیر ۱: ثبت‌نام (قرمز) ---
             "reg1": {
                 "title": "۳. مسیر ثبت‌نام ۱",
                 "type": "equirectangular",
@@ -94,8 +161,6 @@
                 "yaw": 0,
                 "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "به اتاق ثبت‌نام خوش آمدید. مدارک خود را آماده کنید." }]
             },
-
-            // --- مسیر ۲: سلف سرویس (زرد) ---
             "cafe1": {
                 "title": "۱۲. مسیر سلف سرویس ۱",
                 "type": "equirectangular",
@@ -117,8 +182,6 @@
                 "yaw": 0,
                 "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "شما به سلف سرویس رسیدید." }]
             },
-
-            // --- مسیر ۳: دانشکده‌ها (سبز) ---
             "fac1": {
                 "title": "۱۵. مسیر دانشکده‌ها ۱",
                 "type": "equirectangular",
@@ -143,12 +206,9 @@
         }
     });
 
-    // مختصات دقیق نقاط روی نقشه برای هر صحنه
     const mapCoordinates = {
         'scene1': { top: '85%', left: '15%' },
         'scene2': { top: '80%', left: '20%' },
-        
-        // مسیر ثبت‌نام (قرمز)
         'reg1': { top: '75%', left: '25%' },
         'reg2': { top: '70%', left: '30%' },
         'reg3': { top: '65%', left: '35%' },
@@ -158,19 +218,14 @@
         'reg_lib': { top: '45%', left: '55%' },
         'reg_room_path': { top: '40%', left: '60%' },
         'reg_room': { top: '35%', left: '65%' },
-
-        // مسیر سلف سرویس (زرد)
         'cafe1': { top: '70%', left: '70%' },
         'cafe2': { top: '60%', left: '75%' },
         'cafe3': { top: '50%', left: '80%' },
-
-        // مسیر دانشکده‌ها (سبز)
         'fac1': { top: '60%', left: '20%' },
         'fac2': { top: '50%', left: '10%' },
         'fac3': { top: '40%', left: '5%' }
     };
 
-    // جابه‌جایی نقطه قرمز روی نقشه با تغییر صحنه
     viewer.on('scenechange', function(sceneId) {
         const coords = mapCoordinates[sceneId];
         if (coords) {
@@ -179,4 +234,18 @@
             marker.style.left = coords.left;
         }
     });
+
+    // ✅ کد پیش‌بارگذاری (Preload) برای روان شدن حرکت
+    setTimeout(function() {
+        var scenes = viewer.getConfig().scenes;
+        for (var key in scenes) {
+            if (scenes[key].panorama) {
+                var img = new Image();
+                img.src = scenes[key].panorama;
+            }
+        }
+    }, 3000); // ۳ ثانیه بعد از باز شدن تور، شروع به دانلود عکس‌های بعدی می‌کند
 </script>
+
+</body>
+</html>
