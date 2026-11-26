@@ -8,29 +8,31 @@
     <style>
         body { margin: 0; padding: 0; font-family: Tahoma; }
         #panorama { width: 100vw; height: 75vh; }
-        #info { height: 25vh; background: #1a1a1a; color: #00ff00; padding: 15px; font-size: 18px; direction: ltr; text-align: left; font-family: monospace; }
+        #info { height: 25vh; background: #1a1a1a; color: #00ff00; padding: 15px; font-size: 20px; direction: ltr; text-align: left; font-family: monospace; }
         .highlight { color: #ffff00; font-weight: bold; }
+        .instruction { color: #ffffff; font-size: 14px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <div id="panorama"></div>
     <div id="info">
-        <div>👉 تصویر را بچرخانید تا مسیر مورد نظر در وسط قرار گیرد.</div>
-        <br>
+        <div class="instruction">👉 تصویر را با ماوس بچرخانید تا مسیر مورد نظر دقیقاً در وسط صفحه قرار گیرد.</div>
         <div>زاویه افقی (Yaw): <span id="yaw-val" class="highlight">0</span></div>
         <div>زاویه عمودی (Pitch): <span id="pitch-val" class="highlight">0</span></div>
-        <br>
-        <div style="color: #aaa; font-size: 14px;">این اعداد را در کد اصلی (index.html) کپی کنید.</div>
     </div>
 
     <script>
         var viewer = pannellum.viewer('panorama', {
-            "default": { "firstScene": "scene1", "autoLoad": true, "showControls": true },
+            "default": { 
+                "firstScene": "scene1", 
+                "autoLoad": true, 
+                "showControls": true 
+            },
             "scenes": {
                 "scene1": {
                     "title": "تنظیم زاویه",
                     "type": "equirectangular",
-                    "panorama": "02_inside_entrance.jpg",
+                    "panorama": "02_inside_entrance.jpg", // نام عکسی که می‌خواهید تنظیم کنید
                     "yaw": 0,
                     "hotSpots": []
                 }
@@ -38,8 +40,10 @@
         });
 
         setInterval(function() {
-            document.getElementById('yaw-val').innerText = viewer.getYaw().toFixed(1);
-            document.getElementById('pitch-val').innerText = viewer.getPitch().toFixed(1);
+            var yaw = viewer.getYaw();
+            var pitch = viewer.getPitch();
+            document.getElementById('yaw-val').innerText = yaw.toFixed(1);
+            document.getElementById('pitch-val').innerText = pitch.toFixed(1);
         }, 100);
     </script>
 </body>
