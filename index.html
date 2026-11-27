@@ -11,15 +11,15 @@
         body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
         #panorama { width: 100vw; height: 100vh; }
         
-        /* استایل نقشه کوچک */
+        /* ✅ نقشه بزرگ‌تر شده (از 160px به 250px) */
         #minimap-container {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            width: 160px;
-            border: 2px solid #fff;
+            width: 250px; /* بزرگ‌تر شد */
+            border: 3px solid #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
             z-index: 1000;
             overflow: hidden;
             background: #333;
@@ -27,7 +27,7 @@
         #minimap-image { width: 100%; height: auto; display: block; opacity: 0.9; }
         #marker {
             position: absolute;
-            width: 12px; height: 12px;
+            width: 15px; height: 15px;
             background-color: #ff0000;
             border: 2px solid #fff;
             border-radius: 50%;
@@ -43,24 +43,36 @@
             pointer-events: none;
         }
 
-        /* ✅ ناحیه کلیک غول‌پیکر ۳۰۰ در ۳۰۰ پیکسل (کاملاً نامرئی) */
-        .giant-click-area {
-            opacity: 0 !important;
-            width: 300px !important;
-            height: 300px !important;
-            cursor: pointer;
-            /* تنظیم مرکزیت: نصف عرض و ارتفاع */
-            margin-left: -150px !important;
-            margin-top: -150px !important;
+        /* ✅ هات‌اسپات قابل مشاهده (برای تست و سپس نامرئی کردن) */
+        .visible-hotspot {
+            background-color: rgba(255, 0, 0, 0.7) !important;
+            border: 3px solid #fff !important;
+            border-radius: 50% !important;
+            width: 80px !important;
+            height: 80px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 40px !important;
+            color: #fff !important;
+            box-shadow: 0 0 20px rgba(255,0,0,0.9) !important;
+            cursor: pointer !important;
+            margin-left: -40px !important;
+            margin-top: -40px !important;
+            transition: transform 0.2s !important;
+        }
+        .visible-hotspot:hover {
+            transform: scale(1.1) !important;
+            background-color: rgba(255, 0, 0, 0.9) !important;
         }
     </style>
 </head>
 <body>
 
-<div id="hint">برای حرکت، روی فلش‌های داخل عکس کلیک کنید</div>
+<div id="hint">برای حرکت، روی دکمه‌های قرمز کلیک کنید</div>
 <div id="panorama"></div>
 
-<!-- نقشه تعاملی -->
+<!-- نقشه تعاملی (بزرگ‌تر شده) -->
 <div id="minimap-container">
     <img src="map.jpg" id="minimap-image" alt="نقشه">
     <div id="marker"></div>
@@ -72,7 +84,9 @@
             "firstScene": "scene1",
             "sceneFadeDuration": 1000,
             "autoLoad": true,
-            "showControls": true
+            "showControls": true,
+            "minHfov": 50,  // حداقل زوم (بزرگ‌ترین حالت)
+            "maxHfov": 120  // حداکثر زوم (کوچک‌ترین حالت)
         },
         "scenes": {
             "scene1": {
@@ -82,9 +96,9 @@
                 "yaw": -70.3,
                 "hotSpots": [{
                     "pitch": -0.9, "yaw": -70.3, 
-                    "type": "scene", "text": "", 
+                    "type": "scene", "text": "➡️", 
                     "sceneId": "scene2",
-                    "cssClass": "giant-click-area"
+                    "cssClass": "visible-hotspot"
                 }]
             },
             "scene2": {
@@ -93,8 +107,8 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "giant-click-area" },
-                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "giant-click-area" }
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "🔴 ثبت‌نام", "sceneId": "reg1", "cssClass": "visible-hotspot" },
+                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "🟢 دانشکده", "sceneId": "fac1", "cssClass": "visible-hotspot" }
                 ]
             },
             "reg1": {
@@ -102,56 +116,56 @@
                 "type": "equirectangular",
                 "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
-                "hotSpots": [{ "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg2", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "⬆️", "sceneId": "reg2", "cssClass": "visible-hotspot" }]
             },
             "reg2": {
                 "title": "۴. مسیر ثبت‌نام ۲",
                 "type": "equirectangular",
                 "panorama": "04_reg_path_2.jpg",
                 "yaw": -45.2,
-                "hotSpots": [{ "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "⬆️", "sceneId": "reg3", "cssClass": "visible-hotspot" }]
             },
             "reg3": {
                 "title": "۵. مسیر ثبت‌نام ۳",
                 "type": "equirectangular",
                 "panorama": "05_reg_path_3.jpg",
                 "yaw": -90.3,
-                "hotSpots": [{ "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "⬆️", "sceneId": "reg4", "cssClass": "visible-hotspot" }]
             },
             "reg4": {
                 "title": "۶. مسیر ثبت‌نام ۴",
                 "type": "equirectangular",
                 "panorama": "06_reg_path_4.jpg",
                 "yaw": -23.3,
-                "hotSpots": [{ "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "⬆️", "sceneId": "reg5", "cssClass": "visible-hotspot" }]
             },
             "reg5": {
                 "title": "۷. مسیر ثبت‌نام ۵",
                 "type": "equirectangular",
                 "panorama": "07_reg_path_5.jpg",
                 "yaw": -31.7,
-                "hotSpots": [{ "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "⬆️", "sceneId": "reg6", "cssClass": "visible-hotspot" }]
             },
             "reg6": {
                 "title": "۸. مسیر ثبت‌نام ۶",
                 "type": "equirectangular",
                 "panorama": "08_reg_path_6.jpg",
                 "yaw": -48.8,
-                "hotSpots": [{ "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "🏛️", "sceneId": "reg_lib", "cssClass": "visible-hotspot" }]
             },
             "reg_lib": {
                 "title": "۹. سالن ساختمان کتابخانه",
                 "type": "equirectangular",
                 "panorama": "10_library_hall.jpg",
                 "yaw": 47.1,
-                "hotSpots": [{ "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "", "sceneId": "reg_room_path", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "➡️", "sceneId": "reg_room_path", "cssClass": "visible-hotspot" }]
             },
             "reg_room_path": {
                 "title": "۱۰. مسیر اتاق ثبت‌نام",
                 "type": "equirectangular",
                 "panorama": "11_reg_room_path_1.jpg",
                 "yaw": 13.6,
-                "hotSpots": [{ "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "", "sceneId": "reg_room", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "🚪", "sceneId": "reg_room", "cssClass": "visible-hotspot" }]
             },
             "reg_room": {
                 "title": "۱۱. اتاق ثبت‌نام (مقصد)",
@@ -165,14 +179,14 @@
                 "type": "equirectangular",
                 "panorama": "14_cafeteria_path_1.jpg",
                 "yaw": -42.9,
-                "hotSpots": [{ "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "", "sceneId": "cafe2", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "⬆️", "sceneId": "cafe2", "cssClass": "visible-hotspot" }]
             },
             "cafe2": {
                 "title": "۱۳. مسیر سلف سرویس ۲",
                 "type": "equirectangular",
                 "panorama": "15_cafeteria_path_2.jpg",
                 "yaw": -50.7,
-                "hotSpots": [{ "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "", "sceneId": "cafe3", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "⬆️", "sceneId": "cafe3", "cssClass": "visible-hotspot" }]
             },
             "cafe3": {
                 "title": "۱۴. مسیر سلف سرویس ۳",
@@ -186,14 +200,14 @@
                 "type": "equirectangular",
                 "panorama": "17_faculties_path_1.jpg",
                 "yaw": 0.4,
-                "hotSpots": [{ "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "", "sceneId": "fac2", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "⬆️", "sceneId": "fac2", "cssClass": "visible-hotspot" }]
             },
             "fac2": {
                 "title": "۱۶. مسیر دانشکده ۲",
                 "type": "equirectangular",
                 "panorama": "18_faculties_path_2.jpg",
                 "yaw": -36.9,
-                "hotSpots": [{ "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "", "sceneId": "fac3", "cssClass": "giant-click-area" }]
+                "hotSpots": [{ "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "🚪", "sceneId": "fac3", "cssClass": "visible-hotspot" }]
             },
             "fac3": {
                 "title": "۱۷. داخل ساختمان دانشکده",
@@ -203,6 +217,32 @@
                 "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "🏫 شما داخل ساختمان دانشکده هستید." }]
             }
         }
+    });
+
+    // ✅ زوم کردن با اسکرول و پینچ (توسط Pannellum به صورت خودکار پشتیبانی می‌شود)
+    // برای اینکه وقتی به انتهای زوم رسید به صحنه بعد برود، باید شنونده رویداد زوم اضافه کنیم.
+    
+    // حداقل و حداکثر زوم
+    let lastHfov = 120;
+    const ZOOM_THRESHOLD = 60; // اگر زوم از این عدد کمتر شد (یعنی خیلی نزدیک شدیم)، به صحنه بعد برویم
+
+    viewer.on('zoom', function() {
+        const hfov = viewer.getHfov();
+        // اگر کاربر به شدت زوم کرد (hfov کم شد) و قبلاً زوم نکرده بود
+        if (hfov < ZOOM_THRESHOLD && lastHfov >= ZOOM_THRESHOLD) {
+            // پیدا کردن صحنه بعدی از روی هات‌اسپات فعلی
+            const currentScene = viewer.getScene();
+            const scenes = viewer.getConfig().scenes;
+            
+            // پیدا کردن اولین هات‌اسپات از نوع scene
+            if (scenes[currentScene] && scenes[currentScene].hotSpots) {
+                const nextHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
+                if (nextHotspot) {
+                    viewer.loadScene(nextHotspot.sceneId);
+                }
+            }
+        }
+        lastHfov = hfov;
     });
 
     const mapCoordinates = {
