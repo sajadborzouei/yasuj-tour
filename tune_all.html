@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تنظیم زاویه همه عکس‌ها</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: Tahoma; }
+        #panorama { width: 100vw; height: 75vh; }
+        #controls { height: 25vh; background: #1a1a1a; color: #00ff00; padding: 15px; font-size: 18px; direction: ltr; text-align: left; font-family: monospace; overflow-y: auto; }
+        select { font-size: 16px; padding: 5px; margin-bottom: 10px; width: 100%; max-width: 400px; }
+        .highlight { color: #ffff00; font-weight: bold; font-size: 24px; }
+        .copy-btn { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .copy-btn:hover { background: #45a049; }
+        #output { width: 100%; height: 60px; margin-top: 10px; font-family: monospace; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <label for="image-select">📸 عکس مورد نظر را انتخاب کنید:</label>
+        <select id="image-select">
+            <option value="01_outside_entrance.jpg">01. بیرون ورودی پردیس</option>
+            <option value="02_inside_entrance.jpg">02. داخل ورودی پردیس</option>
+            <option value="03_reg_path_1.jpg">03. مسیر ثبت‌نام ۱</option>
+            <option value="04_reg_path_2.jpg">04. مسیر ثبت‌نام ۲</option>
+            <option value="05_reg_path_3.jpg">05. مسیر ثبت‌نام ۳</option>
+            <option value="06_reg_path_4.jpg">06. مسیر ثبت‌نام ۴</option>
+            <option value="07_reg_path_5.jpg">07. مسیر ثبت‌نام ۵</option>
+            <option value="08_reg_path_6.jpg">08. مسیر ثبت‌نام ۶</option>
+            <option value="10_library_hall.jpg">09. سالن کتابخانه</option>
+            <option value="11_reg_room_path_1.jpg">10. مسیر اتاق ثبت‌نام</option>
+            <option value="13_registration_room.jpg">11. اتاق ثبت‌نام</option>
+            <option value="14_cafeteria_path_1.jpg">12. مسیر سلف ۱</option>
+            <option value="15_cafeteria_path_2.jpg">13. مسیر سلف ۲</option>
+            <option value="16_cafeteria_path_3.jpg">14. مسیر سلف ۳</option>
+            <option value="17_faculties_path_1.jpg">15. مسیر دانشکده ۱</option>
+            <option value="18_faculties_path_2.jpg">16. مسیر دانشکده ۲</option>
+            <option value="20_inside_faculty.jpg">17. داخل دانشکده</option>
+        </select>
+        <br>
+        <span>زاویه افقی (Yaw): </span><span id="yaw-val" class="highlight">0</span>
+        <span> | </span>
+        <span>زاویه عمودی (Pitch): </span><span id="pitch-val" class="highlight">0</span>
+        <br><br>
+        <button class="copy-btn" onclick="copyCoordinates()">📋 کپی مختصات فعلی</button>
+        <input type="text" id="output" readonly placeholder="مختصات کپی شده اینجا نمایش داده می‌شود...">
+    </div>
+
+    <div id="panorama"></div>
+
+    <script>
+        var viewer = pannellum.viewer('panorama', {
+            "default": {
+                "firstScene": "scene1",
+                "autoLoad": true,
+                "showControls": true
+            },
+            "scenes": {
+                "scene1": {
+                    "title": "تنظیم زاویه",
+                    "type": "equirectangular",
+                    "panorama": "01_outside_entrance.jpg",
+                    "yaw": 0,
+                    "hotSpots": []
+                }
+            }
+        });
+
+        // به‌روزرسانی اعداد با چرخش
+        setInterval(function() {
+            document.getElementById('yaw-val').innerText = viewer.getYaw().toFixed(1);
+            document.getElementById('pitch-val').innerText = viewer.getPitch().toFixed(1);
+        }, 100);
+
+        // تغییر عکس با انتخاب از لیست
+        document.getElementById('image-select').addEventListener('change', function() {
+            var newImage = this.value;
+            viewer.setPanorama(newImage);
+        });
+
+        // کپی کردن مختصات در کلیپ‌بورد
+        function copyCoordinates() {
+            var yaw = document.getElementById('yaw-val').innerText;
+            var pitch = document.getElementById('pitch-val').innerText;
+            var currentImage = document.getElementById('image-select').value;
+            
+            var text = "عکس: " + currentImage + " | Yaw: " + yaw + " | Pitch: " + pitch;
+            
+            var output = document.getElementById('output');
+            output.value = text;
+            output.select();
+            document.execCommand("copy");
+            alert("مختصات کپی شد:\n" + text);
+        }
+    </script>
+</body>
+</html>
