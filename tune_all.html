@@ -7,8 +7,8 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
     <style>
         body { margin: 0; padding: 0; font-family: Tahoma; }
-        #panorama { width: 100vw; height: 75vh; }
-        #controls { height: 25vh; background: #1a1a1a; color: #00ff00; padding: 15px; font-size: 18px; direction: ltr; text-align: left; font-family: monospace; overflow-y: auto; }
+        #panorama { width: 100vw; height: 70vh; }
+        #controls { height: 30vh; background: #1a1a1a; color: #00ff00; padding: 15px; font-size: 18px; direction: ltr; text-align: left; font-family: monospace; overflow-y: auto; }
         select { font-size: 16px; padding: 5px; margin-bottom: 10px; width: 100%; max-width: 400px; }
         .highlight { color: #ffff00; font-weight: bold; font-size: 24px; }
         .copy-btn { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 10px; }
@@ -50,21 +50,49 @@
     <div id="panorama"></div>
 
     <script>
+        // لیست عکس‌ها برای ساخت صحنه‌های پویا
+        var imageList = {
+            "01_outside_entrance.jpg": "۱. بیرون ورودی",
+            "02_inside_entrance.jpg": "۲. داخل ورودی",
+            "03_reg_path_1.jpg": "۳. مسیر ثبت‌نام ۱",
+            "04_reg_path_2.jpg": "۴. مسیر ثبت‌نام ۲",
+            "05_reg_path_3.jpg": "۵. مسیر ثبت‌نام ۳",
+            "06_reg_path_4.jpg": "۶. مسیر ثبت‌نام ۴",
+            "07_reg_path_5.jpg": "۷. مسیر ثبت‌نام ۵",
+            "08_reg_path_6.jpg": "۸. مسیر ثبت‌نام ۶",
+            "10_library_hall.jpg": "۹. سالن کتابخانه",
+            "11_reg_room_path_1.jpg": "۱۰. مسیر اتاق ثبت‌نام",
+            "13_registration_room.jpg": "۱۱. اتاق ثبت‌نام",
+            "14_cafeteria_path_1.jpg": "۱۲. مسیر سلف ۱",
+            "15_cafeteria_path_2.jpg": "۱۳. مسیر سلف ۲",
+            "16_cafeteria_path_3.jpg": "۱۴. مسیر سلف ۳",
+            "17_faculties_path_1.jpg": "۱۵. مسیر دانشکده ۱",
+            "18_faculties_path_2.jpg": "۱۶. مسیر دانشکده ۲",
+            "20_inside_faculty.jpg": "۱۷. داخل دانشکده"
+        };
+
+        // ساخت خودکار لیست صحنه‌ها
+        var scenes = {};
+        var firstSceneKey = "scene_01_outside_entrance";
+        
+        for (var img in imageList) {
+            var sceneId = "scene_" + img.replace(".jpg", "").replace(/[^a-zA-Z0-9]/g, "_");
+            scenes[sceneId] = {
+                "title": imageList[img],
+                "type": "equirectangular",
+                "panorama": img,
+                "yaw": 0,
+                "hotSpots": []
+            };
+        }
+
         var viewer = pannellum.viewer('panorama', {
             "default": {
-                "firstScene": "scene1",
+                "firstScene": firstSceneKey,
                 "autoLoad": true,
                 "showControls": true
             },
-            "scenes": {
-                "scene1": {
-                    "title": "تنظیم زاویه",
-                    "type": "equirectangular",
-                    "panorama": "01_outside_entrance.jpg",
-                    "yaw": 0,
-                    "hotSpots": []
-                }
-            }
+            "scenes": scenes
         });
 
         // به‌روزرسانی اعداد با چرخش
@@ -73,13 +101,14 @@
             document.getElementById('pitch-val').innerText = viewer.getPitch().toFixed(1);
         }, 100);
 
-        // تغییر عکس با انتخاب از لیست
+        // تغییر عکس با انتخاب از لیست (روش صحیح: loadScene)
         document.getElementById('image-select').addEventListener('change', function() {
             var newImage = this.value;
-            viewer.setPanorama(newImage);
+            var sceneId = "scene_" + newImage.replace(".jpg", "").replace(/[^a-zA-Z0-9]/g, "_");
+            viewer.loadScene(sceneId);
         });
 
-        // کپی کردن مختصات در کلیپ‌بورد
+        // کپی کردن مختصات
         function copyCoordinates() {
             var yaw = document.getElementById('yaw-val').innerText;
             var pitch = document.getElementById('pitch-val').innerText;
