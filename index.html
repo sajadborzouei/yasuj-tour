@@ -24,16 +24,10 @@
             overflow: hidden;
             background: #333;
         }
-        #minimap-image {
-            width: 100%;
-            height: auto;
-            display: block;
-            opacity: 0.9;
-        }
+        #minimap-image { width: 100%; height: auto; display: block; opacity: 0.9; }
         #marker {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 12px; height: 12px;
             background-color: #ff0000;
             border: 2px solid #fff;
             border-radius: 50%;
@@ -42,39 +36,44 @@
             top: 90%; left: 10%;
         }
         #hint {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.7);
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 5px;
-            z-index: 1000;
-            font-size: 12px;
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.7); color: #fff;
+            padding: 8px 15px; border-radius: 5px;
+            z-index: 1000; font-size: 14px;
             pointer-events: none;
         }
 
-        /* ✅ استایل سفارشی برای فلش‌های راهنما (بزرگ‌تر و خواناتر) */
+        /* ✅ استایل بزرگ و طولانی برای فلش‌های راهنما */
         .pnlm-hotspot.pnlm-scene {
-            background-color: rgba(0, 0, 0, 0.85) !important;
-            border: 2px solid #ffd700 !important; /* حاشیه طلایی */
-            border-radius: 8px !important;
-            padding: 10px 15px !important;
-            font-size: 16px !important;
+            background-color: rgba(0, 0, 0, 0.9) !important;
+            border: 3px solid #ffd700 !important; /* حاشیه طلایی ضخیم */
+            border-radius: 15px !important;
+            padding: 15px 25px !important; /* بزرگ‌تر شدن دکمه */
+            font-size: 20px !important; /* فونت بزرگ‌تر */
             font-weight: bold !important;
             color: #fff !important;
-            text-shadow: 1px 1px 2px #000 !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5) !important;
+            text-shadow: 2px 2px 4px #000 !important;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important; /* درخشش طلایی */
             width: auto !important;
             height: auto !important;
             white-space: nowrap !important;
+            transform: scale(1.1); /* کمی بزرگ‌تر از حالت عادی */
+        }
+
+        /* ✅ افزودن یک فلش طولانی با CSS برای نشان دادن جهت */
+        .pnlm-hotspot.pnlm-scene::after {
+            content: "➡️" !important; /* نماد فلش */
+            font-size: 30px !important;
+            position: absolute;
+            left: -40px; /* فاصله از دکمه */
+            top: 50%;
+            transform: translateY(-50%);
         }
     </style>
 </head>
 <body>
 
 <div id="hint">برای انتخاب مسیر، روی دکمه‌های راهنما کلیک کنید</div>
-
 <div id="panorama"></div>
 
 <!-- نقشه تعاملی -->
@@ -110,9 +109,9 @@
                 "yaw": 0,
                 "hotSpots": [
                     // ⚠️ این زاویه‌ها (yaw) فرضی هستند. با ابزار tune.html تنظیم کنید.
-                    { "pitch": -5, "yaw": -68, "type": "scene", "text": "🔴 به سمت محل ثبت‌نام", "sceneId": "reg1" },
-                    { "pitch": -5, "yaw": 68, "type": "scene", "text": "🟡 به سمت سلف سرویس", "sceneId": "cafe1" },
-                    { "pitch": -5, "yaw": -152, "type": "scene", "text": "🟢 به سمت دانشکده‌ها", "sceneId": "fac1" }
+                    { "pitch": -5, "yaw": -45, "type": "scene", "text": "🔴 به سمت محل ثبت‌نام", "sceneId": "reg1" },
+                    { "pitch": -5, "yaw": 60, "type": "scene", "text": "🟡 به سمت سلف سرویس", "sceneId": "cafe1" },
+                    { "pitch": -5, "yaw": -120, "type": "scene", "text": "🟢 به سمت دانشکده‌ها", "sceneId": "fac1" }
                 ]
             },
             "reg1": {
@@ -252,7 +251,7 @@
         }
     });
 
-    // ✅ پیش‌بارگذاری عکس‌ها (برای روان شدن حرکت)
+    // ✅ پیش‌بارگذاری عکس‌ها
     setTimeout(function() {
         var scenes = viewer.getConfig().scenes;
         for (var key in scenes) {
