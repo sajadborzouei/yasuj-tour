@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست حداقلی PSV</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css" />
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; }
+        #viewer { width: 100vw; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="viewer"></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+            "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.module.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import { Viewer } from '@photo-sphere-viewer/core';
+
+        // ابعاد را صریحاً تنظیم می‌کنیم
+        const viewer = new Viewer({
+            container: document.getElementById('viewer'),
+            panorama: '01_outside_entrance.jpg',
+            loadingTxt: 'در حال بارگذاری...',
+            caption: 'تست تصویر اول',
+            // حداقل و حداکثر زوم
+            minFov: 30,
+            maxFov: 90
+        });
+
+        // اجبار به رندر مجدد
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 1000);
+    </script>
+</body>
+</html>
