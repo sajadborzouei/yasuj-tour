@@ -33,7 +33,7 @@
             border-radius: 50%;
             transform: translate(-50%, -50%);
             transition: all 0.8s ease;
-            top: 90%; left: 10%;
+            top: 85%; left: 15%;
         }
         #hint {
             position: absolute; top: 15px; right: 15px;
@@ -43,37 +43,18 @@
             pointer-events: none;
         }
 
-        /* ✅ استایل بزرگ و طولانی برای فلش‌های راهنما */
-        .pnlm-hotspot.pnlm-scene {
-            background-color: rgba(0, 0, 0, 0.9) !important;
-            border: 3px solid #ffd700 !important; /* حاشیه طلایی ضخیم */
-            border-radius: 15px !important;
-            padding: 15px 25px !important; /* بزرگ‌تر شدن دکمه */
-            font-size: 20px !important; /* فونت بزرگ‌تر */
-            font-weight: bold !important;
-            color: #fff !important;
-            text-shadow: 2px 2px 4px #000 !important;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8) !important; /* درخشش طلایی */
-            width: auto !important;
-            height: auto !important;
-            white-space: nowrap !important;
-            transform: scale(1.1); /* کمی بزرگ‌تر از حالت عادی */
-        }
-
-        /* ✅ افزودن یک فلش طولانی با CSS برای نشان دادن جهت */
-        .pnlm-hotspot.pnlm-scene::after {
-            content: "➡️" !important; /* نماد فلش */
-            font-size: 30px !important;
-            position: absolute;
-            left: -40px; /* فاصله از دکمه */
-            top: 50%;
-            transform: translateY(-50%);
+        /* استایل نقطه داغ نامرئی (روی فلش‌های داخل عکس) */
+        .invisible-hotspot {
+            opacity: 0 !important;
+            width: 150px !important;
+            height: 150px !important;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
-<div id="hint">برای انتخاب مسیر، روی دکمه‌های راهنما کلیک کنید</div>
+<div id="hint">برای حرکت، روی فلش‌های داخل عکس کلیک کنید</div>
 <div id="panorama"></div>
 
 <!-- نقشه تعاملی -->
@@ -91,84 +72,90 @@
             "showControls": true
         },
         "scenes": {
+            // ۱. بیرون ورودی
             "scene1": {
                 "title": "۱. بیرون ورودی پردیس",
                 "type": "equirectangular",
                 "panorama": "01_outside_entrance.jpg",
-                "yaw": 0,
+                "yaw": -70.3, // از ابتدا رو به مسیر
                 "hotSpots": [{
-                    "pitch": -5, "yaw": 50, 
-                    "type": "scene", "text": "🚪 ورود به محوطه",
-                    "sceneId": "scene2"
+                    "pitch": -0.9, "yaw": -70.3, 
+                    "type": "scene", "text": "", 
+                    "sceneId": "scene2",
+                    "cssClass": "invisible-hotspot"
                 }]
             },
+            
+            // ۲. داخل ورودی (دوراهی)
             "scene2": {
                 "title": "۲. داخل ورودی پردیس (انتخاب مسیر)",
                 "type": "equirectangular",
                 "panorama": "02_inside_entrance.jpg",
-                "yaw": 0,
+                "yaw": -60.0,
                 "hotSpots": [
-                    // ⚠️ این زاویه‌ها (yaw) فرضی هستند. با ابزار tune.html تنظیم کنید.
-                    { "pitch": -5, "yaw": -45, "type": "scene", "text": "🔴 به سمت محل ثبت‌نام", "sceneId": "reg1" },
-                    { "pitch": -5, "yaw": 60, "type": "scene", "text": "🟡 به سمت سلف سرویس", "sceneId": "cafe1" },
-                    { "pitch": -5, "yaw": -120, "type": "scene", "text": "🟢 به سمت دانشکده‌ها", "sceneId": "fac1" }
+                    // مسیر ثبت‌نام
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
+                    // مسیر دانشکده‌ها
+                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "invisible-hotspot" }
                 ]
             },
+            
+            // --- مسیر ثبت‌نام ---
             "reg1": {
                 "title": "۳. مسیر ثبت‌نام ۱",
                 "type": "equirectangular",
                 "panorama": "03_reg_path_1.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 70, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "reg2" }]
+                "yaw": 9.4,
+                "hotSpots": [{ "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg2", "cssClass": "invisible-hotspot" }]
             },
             "reg2": {
                 "title": "۴. مسیر ثبت‌نام ۲",
                 "type": "equirectangular",
                 "panorama": "04_reg_path_2.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 80, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "reg3" }]
+                "yaw": -45.2,
+                "hotSpots": [{ "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "invisible-hotspot" }]
             },
             "reg3": {
                 "title": "۵. مسیر ثبت‌نام ۳",
                 "type": "equirectangular",
                 "panorama": "05_reg_path_3.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 90, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "reg4" }]
+                "yaw": -90.3,
+                "hotSpots": [{ "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "invisible-hotspot" }]
             },
             "reg4": {
                 "title": "۶. مسیر ثبت‌نام ۴",
                 "type": "equirectangular",
                 "panorama": "06_reg_path_4.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 100, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "reg5" }]
+                "yaw": -23.3,
+                "hotSpots": [{ "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "invisible-hotspot" }]
             },
             "reg5": {
                 "title": "۷. مسیر ثبت‌نام ۵",
                 "type": "equirectangular",
                 "panorama": "07_reg_path_5.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 110, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "reg6" }]
+                "yaw": -31.7,
+                "hotSpots": [{ "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "invisible-hotspot" }]
             },
             "reg6": {
                 "title": "۸. مسیر ثبت‌نام ۶",
                 "type": "equirectangular",
                 "panorama": "08_reg_path_6.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 120, "type": "scene", "text": "🏛️ رسیدن به کتابخانه", "sceneId": "reg_lib" }]
+                "yaw": -48.8,
+                "hotSpots": [{ "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "invisible-hotspot" }]
             },
             "reg_lib": {
                 "title": "۹. سالن ساختمان کتابخانه",
                 "type": "equirectangular",
                 "panorama": "10_library_hall.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 130, "type": "scene", "text": "➡️ مسیر اتاق ثبت‌نام", "sceneId": "reg_room_path" }]
+                "yaw": 47.1,
+                "hotSpots": [{ "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "", "sceneId": "reg_room_path", "cssClass": "invisible-hotspot" }]
             },
             "reg_room_path": {
                 "title": "۱۰. مسیر اتاق ثبت‌نام",
                 "type": "equirectangular",
                 "panorama": "11_reg_room_path_1.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 140, "type": "scene", "text": "🚪 ورود به اتاق", "sceneId": "reg_room" }]
+                "yaw": 13.6,
+                "hotSpots": [{ "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "", "sceneId": "reg_room", "cssClass": "invisible-hotspot" }]
             },
             "reg_room": {
                 "title": "۱۱. اتاق ثبت‌نام (مقصد)",
@@ -177,40 +164,44 @@
                 "yaw": 0,
                 "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "📍 به اتاق ثبت‌نام خوش آمدید. مدارک خود را آماده کنید." }]
             },
+
+            // --- مسیر سلف سرویس ---
             "cafe1": {
                 "title": "۱۲. مسیر سلف سرویس ۱",
                 "type": "equirectangular",
                 "panorama": "14_cafeteria_path_1.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 50, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "cafe2" }]
+                "yaw": -42.9,
+                "hotSpots": [{ "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "", "sceneId": "cafe2", "cssClass": "invisible-hotspot" }]
             },
             "cafe2": {
                 "title": "۱۳. مسیر سلف سرویس ۲",
                 "type": "equirectangular",
                 "panorama": "15_cafeteria_path_2.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 60, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "cafe3" }]
+                "yaw": -50.7,
+                "hotSpots": [{ "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "", "sceneId": "cafe3", "cssClass": "invisible-hotspot" }]
             },
             "cafe3": {
                 "title": "۱۴. مسیر سلف سرویس ۳",
                 "type": "equirectangular",
                 "panorama": "16_cafeteria_path_3.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": 0, "yaw": 0, "type": "info", "text": "🍽️ شما به سلف سرویس رسیدید." }]
+                "yaw": 132.9,
+                "hotSpots": [{ "pitch": -13.6, "yaw": 132.9, "type": "info", "text": "🍽️ شما به سلف سرویس رسیدید." }]
             },
+
+            // --- مسیر دانشکده‌ها ---
             "fac1": {
                 "title": "۱۵. مسیر دانشکده‌ها ۱",
                 "type": "equirectangular",
                 "panorama": "17_faculties_path_1.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 70, "type": "scene", "text": "⬆️ ادامه مسیر", "sceneId": "fac2" }]
+                "yaw": 0.4,
+                "hotSpots": [{ "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "", "sceneId": "fac2", "cssClass": "invisible-hotspot" }]
             },
             "fac2": {
                 "title": "۱۶. مسیر دانشکده ۲",
                 "type": "equirectangular",
                 "panorama": "18_faculties_path_2.jpg",
-                "yaw": 0,
-                "hotSpots": [{ "pitch": -5, "yaw": 80, "type": "scene", "text": "🚪 ورود به ساختمان", "sceneId": "fac3" }]
+                "yaw": -36.9,
+                "hotSpots": [{ "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "", "sceneId": "fac3", "cssClass": "invisible-hotspot" }]
             },
             "fac3": {
                 "title": "۱۷. داخل ساختمان دانشکده",
@@ -222,6 +213,7 @@
         }
     });
 
+    // مختصات نقاط روی نقشه (برای جابه‌جایی نقطه قرمز)
     const mapCoordinates = {
         'scene1': { top: '85%', left: '15%' },
         'scene2': { top: '80%', left: '20%' },
@@ -242,6 +234,7 @@
         'fac3': { top: '40%', left: '5%' }
     };
 
+    // جابه‌جایی نقطه قرمز روی نقشه با تغییر صحنه
     viewer.on('scenechange', function(sceneId) {
         const coords = mapCoordinates[sceneId];
         if (coords) {
@@ -251,7 +244,7 @@
         }
     });
 
-    // ✅ پیش‌بارگذاری عکس‌ها
+    // ✅ پیش‌بارگذاری عکس‌ها (برای روان شدن حرکت)
     setTimeout(function() {
         var scenes = viewer.getConfig().scenes;
         for (var key in scenes) {
