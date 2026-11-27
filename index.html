@@ -91,7 +91,29 @@
             transform: scale(1.1);
         }
 
-        /* هات‌اسپات نامرئی بزرگ برای انتخاب مسیر دانشکده (روی فلش سبز) */
+        /* ✅ دکمه سبز قابل مشاهده برای مسیر دانشکده */
+        .green-hotspot {
+            background-color: rgba(0, 200, 0, 0.9) !important;
+            border: 3px solid #fff !important;
+            border-radius: 50% !important;
+            width: 80px !important;
+            height: 80px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 40px !important;
+            color: #fff !important;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.9) !important;
+            cursor: pointer !important;
+            transform: translate(-50%, -50%) !important;
+            transition: transform 0.2s !important;
+        }
+        .green-hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.1) !important;
+            background-color: rgba(0, 255, 0, 1) !important;
+        }
+
+        /* هات‌اسپات نامرئی (برای بقیه مسیرها) */
         .invisible-hotspot {
             opacity: 0 !important;
             width: 300px !important;
@@ -103,7 +125,7 @@
 </head>
 <body>
 
-<div id="hint">🔴 ادامه مسیر | 🔵 بازگشت | برای مسیر دانشکده روی فلش سبز کلیک کنید</div>
+<div id="hint">🔴 ادامه مسیر | 🔵 بازگشت | 🟢 برای دانشکده روی دکمه سبز کلیک کنید</div>
 
 <div id="nav-buttons">
     <button class="nav-btn forward" id="btn-forward" title="ادامه مسیر">➡️</button>
@@ -143,10 +165,10 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    // هات‌اسپات مسیر ثبت‌نام (برای دکمه ادامه)
+                    // مسیر ثبت‌نام (دکمه قرمز بالا)
                     { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
-                    // هات‌اسپات مسیر دانشکده (برای کلیک روی فلش سبز)
-                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "invisible-hotspot" }
+                    // ✅ مسیر دانشکده (دکمه سبز قابل مشاهده)
+                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "🟢", "sceneId": "fac1", "cssClass": "green-hotspot" }
                 ]
             },
             "reg1": {
@@ -287,12 +309,12 @@
         }
     });
 
-    // ✅ دکمه‌های ناوبری ثابت در بالا
+    // دکمه‌های ثابت بالا
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-            const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
+            const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene' && hs.cssClass !== 'green-hotspot');
             if (forwardHotspot) {
                 viewer.loadScene(forwardHotspot.sceneId);
             }
@@ -307,7 +329,6 @@
         }
     });
 
-    // ✅ تاریخچه صحنه‌ها
     let historyStack = ['scene1'];
 
     const mapCoordinates = {
@@ -342,59 +363,7 @@
         }
     });
 
-    // ✅ قابلیت زوم (اختیاری)
-    let lastHfov = 100;
-    const ZOOM_IN_THRESHOLD = 70;
-    const ZOOM_OUT_THRESHOLD = 110;
-    let isTransitioning = false;
-
-    viewer.on('zoom', function() {
-        if (isTransitioning) return;
-        const hfov = viewer.getHfov();
-        const currentYaw = viewer.getYaw();
-        const currentScene = viewer.getScene();
-        const scenes = viewer.getConfig().scenes;
-        
-        if (hfov < ZOOM_IN_THRESHOLD && lastHfov >= ZOOM_IN_THRESHOLD) {
-            if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-                const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
-                    if (hs.type !== 'scene') return false;
-                    const yawDiff = Math.abs(hs.yaw - currentYaw);
-                    return Math.min(yawDiff, 360 - yawDiff) < 30;
-                });
-                if (targetHotspot) {
-                    isTransitioning = true;
-                    viewer.loadScene(targetHotspot.sceneId);
-                    setTimeout(() => { isTransitioning = false; }, 1000);
-                }
-            }
-        }
-        else if (hfov > ZOOM_OUT_THRESHOLD && lastHfov <= ZOOM_OUT_THRESHOLD) {
-            if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-                const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
-                    if (hs.type !== 'scene') return false;
-                    const yawDiff = Math.abs(hs.yaw - currentYaw);
-                    return Math.min(yawDiff, 360 - yawDiff) < 30;
-                });
-                if (targetHotspot) {
-                    isTransitioning = true;
-                    viewer.loadScene(targetHotspot.sceneId);
-                    setTimeout(() => { isTransitioning = false; }, 1000);
-                }
-            }
-        }
-        lastHfov = hfov;
-    });
-
-    setTimeout(function() {
-        var scenes = viewer.getConfig().scenes;
-        for (var key in scenes) {
-            if (scenes[key].panorama) {
-                var img = new Image();
-                img.src = scenes[key].panorama;
-            }
-        }
-    }, 3000);
+    // زوم کاملاً حذف شد. فقط دکمه‌ها کار می‌کنند.
 </script>
 
 </body>
