@@ -43,15 +43,15 @@
             pointer-events: none;
         }
 
-        /* ✅ استایل نقطه داغ نامرئی بزرگ (برای کلیک روی فلش‌های عکس) */
-        .large-invisible-hotspot {
+        /* ✅ استایل ناحیه کلیک بزرگ و کاملاً نامرئی */
+        .giant-click-area {
             opacity: 0 !important;
-            width: 250px !important;   /* عرض ناحیه کلیک (بسیار بزرگ) */
-            height: 250px !important;  /* ارتفاع ناحیه کلیک */
+            width: 300px !important;   /* عرض بسیار بزرگ */
+            height: 300px !important;  /* ارتفاع بسیار بزرگ */
             cursor: pointer;
-            /* برای اینکه ناحیه کلیک دقیقاً روی فلش قرار گیرد، از موقعیت‌دهی استفاده می‌کنیم */
-            margin-left: -125px !important; /* نصف عرض */
-            margin-top: -125px !important;  /* نصف ارتفاع */
+            /* تنظیم مرکزیت */
+            margin-left: -150px !important;
+            margin-top: -150px !important;
         }
     </style>
 </head>
@@ -84,7 +84,7 @@
                     "pitch": -0.9, "yaw": -70.3, 
                     "type": "scene", "text": "", 
                     "sceneId": "scene2",
-                    "cssClass": "large-invisible-hotspot"
+                    "cssClass": "giant-click-area"
                 }]
             },
             "scene2": {
@@ -93,10 +93,8 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    // مسیر ثبت‌نام (فلش قرمز)
-                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "large-invisible-hotspot" },
-                    // مسیر دانشکده‌ها (فلش سبز)
-                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "large-invisible-hotspot" }
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "giant-click-area" },
+                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "giant-click-area" }
                 ]
             },
             "reg1": {
@@ -104,56 +102,56 @@
                 "type": "equirectangular",
                 "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
-                "hotSpots": [{ "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg2", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg2", "cssClass": "giant-click-area" }]
             },
             "reg2": {
                 "title": "۴. مسیر ثبت‌نام ۲",
                 "type": "equirectangular",
                 "panorama": "04_reg_path_2.jpg",
                 "yaw": -45.2,
-                "hotSpots": [{ "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "giant-click-area" }]
             },
             "reg3": {
                 "title": "۵. مسیر ثبت‌نام ۳",
                 "type": "equirectangular",
                 "panorama": "05_reg_path_3.jpg",
                 "yaw": -90.3,
-                "hotSpots": [{ "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "giant-click-area" }]
             },
             "reg4": {
                 "title": "۶. مسیر ثبت‌نام ۴",
                 "type": "equirectangular",
                 "panorama": "06_reg_path_4.jpg",
                 "yaw": -23.3,
-                "hotSpots": [{ "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "giant-click-area" }]
             },
             "reg5": {
                 "title": "۷. مسیر ثبت‌نام ۵",
                 "type": "equirectangular",
                 "panorama": "07_reg_path_5.jpg",
                 "yaw": -31.7,
-                "hotSpots": [{ "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "giant-click-area" }]
             },
             "reg6": {
                 "title": "۸. مسیر ثبت‌نام ۶",
                 "type": "equirectangular",
                 "panorama": "08_reg_path_6.jpg",
                 "yaw": -48.8,
-                "hotSpots": [{ "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "giant-click-area" }]
             },
             "reg_lib": {
                 "title": "۹. سالن ساختمان کتابخانه",
                 "type": "equirectangular",
                 "panorama": "10_library_hall.jpg",
                 "yaw": 47.1,
-                "hotSpots": [{ "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "", "sceneId": "reg_room_path", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "", "sceneId": "reg_room_path", "cssClass": "giant-click-area" }]
             },
             "reg_room_path": {
                 "title": "۱۰. مسیر اتاق ثبت‌نام",
                 "type": "equirectangular",
                 "panorama": "11_reg_room_path_1.jpg",
                 "yaw": 13.6,
-                "hotSpots": [{ "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "", "sceneId": "reg_room", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "", "sceneId": "reg_room", "cssClass": "giant-click-area" }]
             },
             "reg_room": {
                 "title": "۱۱. اتاق ثبت‌نام (مقصد)",
@@ -167,14 +165,14 @@
                 "type": "equirectangular",
                 "panorama": "14_cafeteria_path_1.jpg",
                 "yaw": -42.9,
-                "hotSpots": [{ "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "", "sceneId": "cafe2", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "", "sceneId": "cafe2", "cssClass": "giant-click-area" }]
             },
             "cafe2": {
                 "title": "۱۳. مسیر سلف سرویس ۲",
                 "type": "equirectangular",
                 "panorama": "15_cafeteria_path_2.jpg",
                 "yaw": -50.7,
-                "hotSpots": [{ "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "", "sceneId": "cafe3", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "", "sceneId": "cafe3", "cssClass": "giant-click-area" }]
             },
             "cafe3": {
                 "title": "۱۴. مسیر سلف سرویس ۳",
@@ -188,14 +186,14 @@
                 "type": "equirectangular",
                 "panorama": "17_faculties_path_1.jpg",
                 "yaw": 0.4,
-                "hotSpots": [{ "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "", "sceneId": "fac2", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "", "sceneId": "fac2", "cssClass": "giant-click-area" }]
             },
             "fac2": {
                 "title": "۱۶. مسیر دانشکده ۲",
                 "type": "equirectangular",
                 "panorama": "18_faculties_path_2.jpg",
                 "yaw": -36.9,
-                "hotSpots": [{ "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "", "sceneId": "fac3", "cssClass": "large-invisible-hotspot" }]
+                "hotSpots": [{ "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "", "sceneId": "fac3", "cssClass": "giant-click-area" }]
             },
             "fac3": {
                 "title": "۱۷. داخل ساختمان دانشکده",
