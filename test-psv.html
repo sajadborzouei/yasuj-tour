@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تست Photo Sphere Viewer - تور مجازی یاسوج</title>
     
-    <!-- کتابخانه اصلی Photo Sphere Viewer -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.js"></script>
-    
-    <!-- افزونه Markers برای هات‌اسپات‌ها -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.css" />
-    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.js"></script>
+    <!-- استایل اصلی PSV -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.min.css" />
+    <!-- استایل افزونه Markers -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.min.css" />
     
     <style>
         html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #000; font-family: Tahoma, sans-serif; }
         #viewer { width: 100vw; height: 100vh; }
         
-        /* استایل دکمه‌های روی عکس */
         .marker-btn {
             background-color: rgba(255, 0, 0, 0.8);
             border: 3px solid #fff;
@@ -33,26 +29,12 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        .marker-btn:hover {
-            transform: scale(1.1);
-            background-color: rgba(255, 0, 0, 1);
-        }
-        .marker-btn.green {
-            background-color: rgba(0, 200, 0, 0.8);
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.9);
-        }
-        .marker-btn.green:hover {
-            background-color: rgba(0, 255, 0, 1);
-        }
-        .marker-btn.blue {
-            background-color: rgba(0, 102, 255, 0.8);
-            box-shadow: 0 0 20px rgba(0, 102, 255, 0.9);
-        }
-        .marker-btn.blue:hover {
-            background-color: rgba(0, 102, 255, 1);
-        }
+        .marker-btn:hover { transform: scale(1.1); background-color: rgba(255, 0, 0, 1); }
+        .marker-btn.green { background-color: rgba(0, 200, 0, 0.8); box-shadow: 0 0 20px rgba(0, 255, 0, 0.9); }
+        .marker-btn.green:hover { background-color: rgba(0, 255, 0, 1); }
+        .marker-btn.blue { background-color: rgba(0, 102, 255, 0.8); box-shadow: 0 0 20px rgba(0, 102, 255, 0.9); }
+        .marker-btn.blue:hover { background-color: rgba(0, 102, 255, 1); }
         
-        /* پیام راهنما */
         #hint {
             position: absolute; top: 15px; right: 15px;
             background: rgba(0,0,0,0.7); color: #fff;
@@ -67,8 +49,22 @@
 <div id="hint">تست Photo Sphere Viewer | با ماوس بچرخانید و کلیک کنید</div>
 <div id="viewer"></div>
 
-<script>
-    // تعریف صحنه‌ها (فقط چند صحنه برای تست)
+<!-- ✅ تعریف Import Map برای لود صحیح Three.js و PSV -->
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+        "@photo-sphere-viewer/core": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core/index.module.js",
+        "@photo-sphere-viewer/markers-plugin": "https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin/index.module.js"
+    }
+}
+</script>
+
+<!-- ✅ استفاده از type="module" -->
+<script type="module">
+    import { Viewer } from '@photo-sphere-viewer/core';
+    import { MarkersPlugin } from '@photo-sphere-viewer/markers-plugin';
+
     const scenes = {
         "scene1": {
             panorama: "01_outside_entrance.jpg",
@@ -136,42 +132,19 @@
         }
     };
 
-    let viewer;
-
-    // تابع برای بارگذاری صحنه جدید
-    function loadScene(sceneId) {
-        const scene = scenes[sceneId];
-        if (!scene) return;
-        
-        viewer.setPanorama(scene.panorama, {
-            caption: scene.caption,
-            markers: scene.markers.map(m => ({
-                id: m.id,
-                position: m.position,
-                html: m.html,
-                anchor: m.anchor,
-                tooltip: m.tooltip,
-                // ذخیره sceneId در دیتای مارکر برای استفاده در رویداد کلیک
-                data: { sceneId: m.sceneId }
-            }))
-        });
-    }
-
-    // مقداردهی اولیه
-    viewer = new PhotoSphereViewer.Viewer({
+    const viewer = new Viewer({
         container: document.getElementById('viewer'),
         panorama: scenes["scene1"].panorama,
         caption: scenes["scene1"].caption,
-        loadingImg: null,
         loadingTxt: "در حال بارگذاری...",
         touchmoveTwoFingers: true,
-        mousewheelCtrlKey: false, // فعال کردن زوم با اسکرول
+        mousewheelCtrlKey: false,
         defaultYaw: 0,
         defaultPitch: 0,
         minFov: 30,
         maxFov: 90,
         plugins: [
-            [PhotoSphereViewer.MarkersPlugin, {
+            [MarkersPlugin, {
                 markers: scenes["scene1"].markers.map(m => ({
                     id: m.id,
                     position: m.position,
@@ -184,17 +157,27 @@
         ]
     });
 
-    // ✅ اتصال رویداد کلیک مارکرها به تابع loadScene
-    const markersPlugin = viewer.getPlugin(PhotoSphereViewer.MarkersPlugin);
-    
+    const markersPlugin = viewer.getPlugin(MarkersPlugin);
+
     markersPlugin.addEventListener('select-marker', ({ marker }) => {
         if (marker.data && marker.data.sceneId) {
-            loadScene(marker.data.sceneId);
+            const sceneId = marker.data.sceneId;
+            const scene = scenes[sceneId];
+            if (scene) {
+                viewer.setPanorama(scene.panorama, {
+                    caption: scene.caption,
+                    markers: scene.markers.map(m => ({
+                        id: m.id,
+                        position: m.position,
+                        html: m.html,
+                        anchor: m.anchor,
+                        tooltip: m.tooltip,
+                        data: { sceneId: m.sceneId }
+                    }))
+                });
+            }
         }
     });
-
-    // اگر خطای ابعاد رخ داد، دوباره رندر کن
-    window.dispatchEvent(new Event('resize'));
 </script>
 
 </body>
