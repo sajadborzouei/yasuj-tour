@@ -42,6 +42,7 @@
             pointer-events: none;
         }
 
+        /* دکمه قرمز (ادامه) - دقیقاً روی yaw */
         .forward-hotspot {
             background-color: rgba(255, 0, 0, 0.8) !important;
             border: 3px solid #fff !important;
@@ -63,6 +64,7 @@
             background-color: rgba(255, 0, 0, 1) !important;
         }
 
+        /* دکمه آبی (بازگشت) - کمی پایین‌تر از دکمه قرمز قرار می‌گیرد */
         .backward-hotspot {
             background-color: rgba(0, 102, 255, 0.8) !important;
             border: 3px solid #fff !important;
@@ -78,6 +80,7 @@
             cursor: pointer !important;
             transform: translate(-50%, -50%) !important;
             transition: transform 0.2s !important;
+            margin-top: 60px; /* فاصله از دکمه قرمز */
         }
         .backward-hotspot:hover {
             transform: translate(-50%, -50%) scale(1.1) !important;
@@ -102,8 +105,8 @@
             "sceneFadeDuration": 1000,
             "autoLoad": true,
             "showControls": true,
-            "minHfov": 40,   // حداقل زاویه دید (بیشترین زوم)
-            "maxHfov": 120   // حداکثر زاویه دید (کمترین زوم)
+            "minHfov": 40,
+            "maxHfov": 120
         },
         "scenes": {
             "scene1": {
@@ -126,7 +129,8 @@
                 "hotSpots": [
                     { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "🔴", "sceneId": "reg1", "cssClass": "forward-hotspot" },
                     { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "🟢", "sceneId": "fac1", "cssClass": "forward-hotspot" },
-                    { "pitch": -5.0, "yaw": 180.0, "type": "scene", "text": "⬅️", "sceneId": "scene1", "cssClass": "backward-hotspot" }
+                    // دکمه بازگشت به بیرون (همان yaw دکمه ادامه)
+                    { "pitch": -5.0, "yaw": -60.0, "type": "scene", "text": "⬅️", "sceneId": "scene1", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg1": {
@@ -136,7 +140,7 @@
                 "yaw": 9.4,
                 "hotSpots": [
                     { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "⬆️", "sceneId": "reg2", "cssClass": "forward-hotspot" },
-                    { "pitch": -4.0, "yaw": 180.0, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": -4.0, "yaw": 9.4, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg2": {
@@ -146,7 +150,7 @@
                 "yaw": -45.2,
                 "hotSpots": [
                     { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "⬆️", "sceneId": "reg3", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.7, "yaw": 135.0, "type": "scene", "text": "⬅️", "sceneId": "reg1", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "⬅️", "sceneId": "reg1", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg3": {
@@ -156,7 +160,7 @@
                 "yaw": -90.3,
                 "hotSpots": [
                     { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "⬆️", "sceneId": "reg4", "cssClass": "forward-hotspot" },
-                    { "pitch": 2.0, "yaw": 90.0, "type": "scene", "text": "⬅️", "sceneId": "reg2", "cssClass": "backward-hotspot" }
+                    { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "⬅️", "sceneId": "reg2", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg4": {
@@ -166,7 +170,7 @@
                 "yaw": -23.3,
                 "hotSpots": [
                     { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "⬆️", "sceneId": "reg5", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.1, "yaw": 160.0, "type": "scene", "text": "⬅️", "sceneId": "reg3", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "⬅️", "sceneId": "reg3", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg5": {
@@ -176,7 +180,7 @@
                 "yaw": -31.7,
                 "hotSpots": [
                     { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "⬆️", "sceneId": "reg6", "cssClass": "forward-hotspot" },
-                    { "pitch": -2.3, "yaw": 150.0, "type": "scene", "text": "⬅️", "sceneId": "reg4", "cssClass": "backward-hotspot" }
+                    { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "⬅️", "sceneId": "reg4", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg6": {
@@ -186,7 +190,7 @@
                 "yaw": -48.8,
                 "hotSpots": [
                     { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "🏛️", "sceneId": "reg_lib", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.5, "yaw": 130.0, "type": "scene", "text": "⬅️", "sceneId": "reg5", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "⬅️", "sceneId": "reg5", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg_lib": {
@@ -196,7 +200,7 @@
                 "yaw": 47.1,
                 "hotSpots": [
                     { "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "➡️", "sceneId": "reg_room_path", "cssClass": "forward-hotspot" },
-                    { "pitch": -0.4, "yaw": -130.0, "type": "scene", "text": "⬅️", "sceneId": "reg6", "cssClass": "backward-hotspot" }
+                    { "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "⬅️", "sceneId": "reg6", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg_room_path": {
@@ -206,7 +210,7 @@
                 "yaw": 13.6,
                 "hotSpots": [
                     { "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "🚪", "sceneId": "reg_room", "cssClass": "forward-hotspot" },
-                    { "pitch": -6.0, "yaw": 180.0, "type": "scene", "text": "⬅️", "sceneId": "reg_lib", "cssClass": "backward-hotspot" }
+                    { "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "⬅️", "sceneId": "reg_lib", "cssClass": "backward-hotspot" }
                 ]
             },
             "reg_room": {
@@ -216,7 +220,7 @@
                 "yaw": 0,
                 "hotSpots": [
                     { "pitch": 0, "yaw": 0, "type": "info", "text": "📍 به اتاق ثبت‌نام خوش آمدید." },
-                    { "pitch": 0, "yaw": 180.0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "reg_room_path", "cssClass": "backward-hotspot" }
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "reg_room_path", "cssClass": "backward-hotspot" }
                 ]
             },
             "cafe1": {
@@ -226,7 +230,7 @@
                 "yaw": -42.9,
                 "hotSpots": [
                     { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "⬆️", "sceneId": "cafe2", "cssClass": "forward-hotspot" },
-                    { "pitch": 1.1, "yaw": 140.0, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
                 ]
             },
             "cafe2": {
@@ -236,7 +240,7 @@
                 "yaw": -50.7,
                 "hotSpots": [
                     { "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "⬆️", "sceneId": "cafe3", "cssClass": "forward-hotspot" },
-                    { "pitch": -1.0, "yaw": 130.0, "type": "scene", "text": "⬅️", "sceneId": "cafe1", "cssClass": "backward-hotspot" }
+                    { "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "⬅️", "sceneId": "cafe1", "cssClass": "backward-hotspot" }
                 ]
             },
             "cafe3": {
@@ -246,7 +250,7 @@
                 "yaw": 132.9,
                 "hotSpots": [
                     { "pitch": -13.6, "yaw": 132.9, "type": "info", "text": "🍽️ سلف سرویس" },
-                    { "pitch": -13.6, "yaw": -30.0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "cafe2", "cssClass": "backward-hotspot" }
+                    { "pitch": -13.6, "yaw": 132.9, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "cafe2", "cssClass": "backward-hotspot" }
                 ]
             },
             "fac1": {
@@ -256,7 +260,7 @@
                 "yaw": 0.4,
                 "hotSpots": [
                     { "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "⬆️", "sceneId": "fac2", "cssClass": "forward-hotspot" },
-                    { "pitch": -8.6, "yaw": 180.0, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
                 ]
             },
             "fac2": {
@@ -266,7 +270,7 @@
                 "yaw": -36.9,
                 "hotSpots": [
                     { "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "🚪", "sceneId": "fac3", "cssClass": "forward-hotspot" },
-                    { "pitch": -6.1, "yaw": 140.0, "type": "scene", "text": "⬅️", "sceneId": "fac1", "cssClass": "backward-hotspot" }
+                    { "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "⬅️", "sceneId": "fac1", "cssClass": "backward-hotspot" }
                 ]
             },
             "fac3": {
@@ -276,47 +280,50 @@
                 "yaw": 0,
                 "hotSpots": [
                     { "pitch": 0, "yaw": 0, "type": "info", "text": "🏫 دانشکده" },
-                    { "pitch": 0, "yaw": 180.0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "fac2", "cssClass": "backward-hotspot" }
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "fac2", "cssClass": "backward-hotspot" }
                 ]
             }
         }
     });
 
-    // ✅ قابلیت زوم برای رفتن به صحنه بعدی و قبلی
-    let lastHfov = 100; // مقدار اولیه hfov
-    const ZOOM_IN_THRESHOLD = 70;  // اگر hfov از این کمتر شد (زوم به جلو)
-    const ZOOM_OUT_THRESHOLD = 110; // اگر hfov از این بیشتر شد (زوم به عقب)
-    
-    // جلوگیری از اجرای همزمان
+    // قابلیت زوم (اختیاری) - با کلیک و زوم کار می‌کند
+    let lastHfov = 100;
+    const ZOOM_IN_THRESHOLD = 70;
+    const ZOOM_OUT_THRESHOLD = 110;
     let isTransitioning = false;
 
     viewer.on('zoom', function() {
         if (isTransitioning) return;
         
         const hfov = viewer.getHfov();
+        const currentYaw = viewer.getYaw();
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         
-        // اگر کاربر به شدت زوم کرد (به جلو)
         if (hfov < ZOOM_IN_THRESHOLD && lastHfov >= ZOOM_IN_THRESHOLD) {
             if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-                // پیدا کردن اولین هات‌اسپات از نوع scene (دکمه ادامه)
-                const nextHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene' && hs.cssClass === 'forward-hotspot');
-                if (nextHotspot) {
+                const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
+                    if (hs.type !== 'scene' || hs.cssClass !== 'forward-hotspot') return false;
+                    const yawDiff = Math.abs(hs.yaw - currentYaw);
+                    return Math.min(yawDiff, 360 - yawDiff) < 30;
+                });
+                if (targetHotspot) {
                     isTransitioning = true;
-                    viewer.loadScene(nextHotspot.sceneId);
+                    viewer.loadScene(targetHotspot.sceneId);
                     setTimeout(() => { isTransitioning = false; }, 1000);
                 }
             }
         }
-        // اگر کاربر زوم را کم کرد (به عقب)
         else if (hfov > ZOOM_OUT_THRESHOLD && lastHfov <= ZOOM_OUT_THRESHOLD) {
             if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-                // پیدا کردن هات‌اسپات از نوع scene با کلاس backward
-                const prevHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene' && hs.cssClass === 'backward-hotspot');
-                if (prevHotspot) {
+                const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
+                    if (hs.type !== 'scene' || hs.cssClass !== 'backward-hotspot') return false;
+                    const yawDiff = Math.abs(hs.yaw - currentYaw);
+                    return Math.min(yawDiff, 360 - yawDiff) < 30;
+                });
+                if (targetHotspot) {
                     isTransitioning = true;
-                    viewer.loadScene(prevHotspot.sceneId);
+                    viewer.loadScene(targetHotspot.sceneId);
                     setTimeout(() => { isTransitioning = false; }, 1000);
                 }
             }
