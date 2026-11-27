@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تست Photo Sphere Viewer - تور مجازی یاسوج</title>
     
     <!-- کتابخانه اصلی Photo Sphere Viewer -->
@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.js"></script>
     
     <style>
-        body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #000; font-family: Tahoma, sans-serif; }
         #viewer { width: 100vw; height: 100vh; }
         
         /* استایل دکمه‌های روی عکس */
@@ -37,6 +37,20 @@
             transform: scale(1.1);
             background-color: rgba(255, 0, 0, 1);
         }
+        .marker-btn.green {
+            background-color: rgba(0, 200, 0, 0.8);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.9);
+        }
+        .marker-btn.green:hover {
+            background-color: rgba(0, 255, 0, 1);
+        }
+        .marker-btn.blue {
+            background-color: rgba(0, 102, 255, 0.8);
+            box-shadow: 0 0 20px rgba(0, 102, 255, 0.9);
+        }
+        .marker-btn.blue:hover {
+            background-color: rgba(0, 102, 255, 1);
+        }
         
         /* پیام راهنما */
         #hint {
@@ -54,7 +68,7 @@
 <div id="viewer"></div>
 
 <script>
-    // تعریف صحنه‌ها (فقط دو صحنه برای تست)
+    // تعریف صحنه‌ها (فقط چند صحنه برای تست)
     const scenes = {
         "scene1": {
             panorama: "01_outside_entrance.jpg",
@@ -66,8 +80,7 @@
                     html: "<div class='marker-btn'>➡️</div>",
                     anchor: "center center",
                     tooltip: "ورود به محوطه",
-                    // در PSV برای رفتن به صحنه بعد از کلیک، از رویداد استفاده می‌کنیم
-                    click: () => loadScene("scene2")
+                    sceneId: "scene2"
                 }
             ]
         },
@@ -78,18 +91,18 @@
                 {
                     id: "to-reg1",
                     position: { yaw: -60.0, pitch: -9.7 },
-                    html: "<div class='marker-btn' style='background-color: rgba(255, 0, 0, 0.8);'>🔴</div>",
+                    html: "<div class='marker-btn'>🔴</div>",
                     anchor: "center center",
                     tooltip: "مسیر ثبت‌نام",
-                    click: () => loadScene("scene3")
+                    sceneId: "scene3"
                 },
                 {
                     id: "to-fac1",
                     position: { yaw: -151.7, pitch: -3.2 },
-                    html: "<div class='marker-btn' style='background-color: rgba(0, 200, 0, 0.8);'>🟢</div>",
+                    html: "<div class='marker-btn green'>🟢</div>",
                     anchor: "center center",
                     tooltip: "مسیر دانشکده",
-                    click: () => loadScene("scene4")
+                    sceneId: "scene4"
                 }
             ]
         },
@@ -100,10 +113,10 @@
                 {
                     id: "back-scene2",
                     position: { yaw: 180, pitch: -5 },
-                    html: "<div class='marker-btn' style='background-color: rgba(0, 102, 255, 0.8);'>⬅️</div>",
+                    html: "<div class='marker-btn blue'>⬅️</div>",
                     anchor: "center center",
                     tooltip: "بازگشت",
-                    click: () => loadScene("scene2")
+                    sceneId: "scene2"
                 }
             ]
         },
@@ -114,10 +127,10 @@
                 {
                     id: "back-scene2",
                     position: { yaw: 180, pitch: -5 },
-                    html: "<div class='marker-btn' style='background-color: rgba(0, 102, 255, 0.8);'>⬅️</div>",
+                    html: "<div class='marker-btn blue'>⬅️</div>",
                     anchor: "center center",
                     tooltip: "بازگشت",
-                    click: () => loadScene("scene2")
+                    sceneId: "scene2"
                 }
             ]
         }
@@ -138,15 +151,9 @@
                 html: m.html,
                 anchor: m.anchor,
                 tooltip: m.tooltip,
-                // PSV از رویداد click برای مارکرها استفاده می‌کند
-                // در اینجا از یک ترفند برای اتصال تابع استفاده می‌کنیم
+                // ذخیره sceneId در دیتای مارکر برای استفاده در رویداد کلیک
+                data: { sceneId: m.sceneId }
             }))
-        }).then(() => {
-            // پس از لود شدن، رویداد کلیک مارکرها را متصل می‌کنیم
-            setTimeout(() => {
-                // این بخش نیاز به تنظیمات دقیق‌تر PSV دارد
-                // فعلاً برای تست، کلیک روی مارکرها را از طریق کنسول شبیه‌سازی می‌کنیم
-            }, 100);
         });
     }
 
@@ -171,15 +178,23 @@
                     html: m.html,
                     anchor: m.anchor,
                     tooltip: m.tooltip,
-                    // در اینجا می‌توانیم رویداد کلیک را مستقیم تعریف کنیم (در نسخه‌های جدید)
-                    // اما برای اطمینان، از روش زیر استفاده می‌کنیم:
+                    data: { sceneId: m.sceneId }
                 }))
             }]
         ]
     });
 
-    // برای اتصال کلیک مارکرها به تغییر صحنه، باید از رویدادهای PSV استفاده کنیم
-    // این بخش نیاز به تنظیمات بیشتری دارد که در مرحله بعد انجام می‌دهیم
+    // ✅ اتصال رویداد کلیک مارکرها به تابع loadScene
+    const markersPlugin = viewer.getPlugin(PhotoSphereViewer.MarkersPlugin);
+    
+    markersPlugin.addEventListener('select-marker', ({ marker }) => {
+        if (marker.data && marker.data.sceneId) {
+            loadScene(marker.data.sceneId);
+        }
+    });
+
+    // اگر خطای ابعاد رخ داد، دوباره رندر کن
+    window.dispatchEvent(new Event('resize'));
 </script>
 
 </body>
