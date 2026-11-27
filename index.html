@@ -11,6 +11,7 @@
         body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
         #panorama { width: 100vw; height: 100vh; }
         
+        /* نقشه */
         #minimap-container {
             position: absolute;
             bottom: 20px;
@@ -42,55 +43,75 @@
             pointer-events: none;
         }
 
-        /* دکمه قرمز (ادامه) - دقیقاً روی yaw */
-        .forward-hotspot {
-            background-color: rgba(255, 0, 0, 0.8) !important;
-            border: 3px solid #fff !important;
-            border-radius: 50% !important;
-            width: 80px !important;
-            height: 80px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-size: 40px !important;
-            color: #fff !important;
-            box-shadow: 0 0 20px rgba(255,0,0,0.9) !important;
-            cursor: pointer !important;
-            transform: translate(-50%, -50%) !important;
-            transition: transform 0.2s !important;
-        }
-        .forward-hotspot:hover {
-            transform: translate(-50%, -50%) scale(1.1) !important;
-            background-color: rgba(255, 0, 0, 1) !important;
+        /* ✅ نوار دکمه‌های ناوبری در وسط و بالای صفحه */
+        #nav-buttons {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* دکمه آبی (بازگشت) - کمی پایین‌تر از دکمه قرمز قرار می‌گیرد */
-        .backward-hotspot {
-            background-color: rgba(0, 102, 255, 0.8) !important;
-            border: 3px solid #fff !important;
-            border-radius: 50% !important;
-            width: 60px !important;
-            height: 60px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-size: 30px !important;
-            color: #fff !important;
-            box-shadow: 0 0 15px rgba(0,102,255,0.9) !important;
-            cursor: pointer !important;
-            transform: translate(-50%, -50%) !important;
-            transition: transform 0.2s !important;
-            margin-top: 60px; /* فاصله از دکمه قرمز */
+        .nav-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        .backward-hotspot:hover {
-            transform: translate(-50%, -50%) scale(1.1) !important;
-            background-color: rgba(0, 102, 255, 1) !important;
+
+        .nav-btn.forward {
+            background-color: rgba(255, 0, 0, 0.8);
+            box-shadow: 0 0 20px rgba(255,0,0,0.9);
+        }
+        .nav-btn.forward:hover {
+            background-color: rgba(255, 0, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .nav-btn.backward {
+            background-color: rgba(0, 102, 255, 0.8);
+            box-shadow: 0 0 20px rgba(0,102,255,0.9);
+        }
+        .nav-btn.backward:hover {
+            background-color: rgba(0, 102, 255, 1);
+            transform: scale(1.1);
+        }
+
+        /* استایل هات‌اسپات نامرئی (برای کلیک روی فلش‌های خودتان) */
+        .invisible-hotspot {
+            opacity: 0 !important;
+            width: 300px !important;
+            height: 300px !important;
+            cursor: pointer;
+            transform: translate(-50%, -50%) !important;
         }
     </style>
 </head>
 <body>
 
-<div id="hint">🔴 ادامه مسیر | 🔵 بازگشت</div>
+<div id="hint">برای حرکت از دکمه‌های بالا استفاده کنید</div>
+
+<!-- ✅ دکمه‌های ناوبری ثابت در وسط بالا -->
+<div id="nav-buttons">
+    <button class="nav-btn forward" id="btn-forward" title="ادامه مسیر">➡️</button>
+    <button class="nav-btn backward" id="btn-backward" title="بازگشت">⬅️</button>
+</div>
+
 <div id="panorama"></div>
 
 <div id="minimap-container">
@@ -114,12 +135,10 @@
                 "type": "equirectangular",
                 "panorama": "01_outside_entrance.jpg",
                 "yaw": -70.3,
-                "hotSpots": [{
-                    "pitch": -0.9, "yaw": -70.3, 
-                    "type": "scene", "text": "➡️", 
-                    "sceneId": "scene2",
-                    "cssClass": "forward-hotspot"
-                }]
+                "hotSpots": [
+                    // هات‌اسپات نامرئی برای کلیک روی فلش خودتان
+                    { "pitch": -0.9, "yaw": -70.3, "type": "scene", "text": "", "sceneId": "scene2", "cssClass": "invisible-hotspot" }
+                ]
             },
             "scene2": {
                 "title": "۲. داخل ورودی پردیس",
@@ -127,10 +146,8 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "🔴", "sceneId": "reg1", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "🟢", "sceneId": "fac1", "cssClass": "forward-hotspot" },
-                    // دکمه بازگشت به بیرون (همان yaw دکمه ادامه)
-                    { "pitch": -5.0, "yaw": -60.0, "type": "scene", "text": "⬅️", "sceneId": "scene1", "cssClass": "backward-hotspot" }
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
+                    { "pitch": -3.2, "yaw": -151.7, "type": "scene", "text": "", "sceneId": "fac1", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg1": {
@@ -139,8 +156,7 @@
                 "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
                 "hotSpots": [
-                    { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "⬆️", "sceneId": "reg2", "cssClass": "forward-hotspot" },
-                    { "pitch": -4.0, "yaw": 9.4, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg2", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg2": {
@@ -149,8 +165,7 @@
                 "panorama": "04_reg_path_2.jpg",
                 "yaw": -45.2,
                 "hotSpots": [
-                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "⬆️", "sceneId": "reg3", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "⬅️", "sceneId": "reg1", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg3": {
@@ -159,8 +174,7 @@
                 "panorama": "05_reg_path_3.jpg",
                 "yaw": -90.3,
                 "hotSpots": [
-                    { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "⬆️", "sceneId": "reg4", "cssClass": "forward-hotspot" },
-                    { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "⬅️", "sceneId": "reg2", "cssClass": "backward-hotspot" }
+                    { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg4": {
@@ -169,8 +183,7 @@
                 "panorama": "06_reg_path_4.jpg",
                 "yaw": -23.3,
                 "hotSpots": [
-                    { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "⬆️", "sceneId": "reg5", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "⬅️", "sceneId": "reg3", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg5": {
@@ -179,8 +192,7 @@
                 "panorama": "07_reg_path_5.jpg",
                 "yaw": -31.7,
                 "hotSpots": [
-                    { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "⬆️", "sceneId": "reg6", "cssClass": "forward-hotspot" },
-                    { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "⬅️", "sceneId": "reg4", "cssClass": "backward-hotspot" }
+                    { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg6": {
@@ -189,8 +201,7 @@
                 "panorama": "08_reg_path_6.jpg",
                 "yaw": -48.8,
                 "hotSpots": [
-                    { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "🏛️", "sceneId": "reg_lib", "cssClass": "forward-hotspot" },
-                    { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "⬅️", "sceneId": "reg5", "cssClass": "backward-hotspot" }
+                    { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg_lib": {
@@ -199,8 +210,7 @@
                 "panorama": "10_library_hall.jpg",
                 "yaw": 47.1,
                 "hotSpots": [
-                    { "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "➡️", "sceneId": "reg_room_path", "cssClass": "forward-hotspot" },
-                    { "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "⬅️", "sceneId": "reg6", "cssClass": "backward-hotspot" }
+                    { "pitch": -0.4, "yaw": 47.1, "type": "scene", "text": "", "sceneId": "reg_room_path", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg_room_path": {
@@ -209,8 +219,7 @@
                 "panorama": "11_reg_room_path_1.jpg",
                 "yaw": 13.6,
                 "hotSpots": [
-                    { "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "🚪", "sceneId": "reg_room", "cssClass": "forward-hotspot" },
-                    { "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "⬅️", "sceneId": "reg_lib", "cssClass": "backward-hotspot" }
+                    { "pitch": -6.0, "yaw": 13.6, "type": "scene", "text": "", "sceneId": "reg_room", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg_room": {
@@ -219,8 +228,7 @@
                 "panorama": "13_registration_room.jpg",
                 "yaw": 0,
                 "hotSpots": [
-                    { "pitch": 0, "yaw": 0, "type": "info", "text": "📍 به اتاق ثبت‌نام خوش آمدید." },
-                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "reg_room_path", "cssClass": "backward-hotspot" }
+                    { "pitch": 0, "yaw": 0, "type": "info", "text": "📍 به اتاق ثبت‌نام خوش آمدید." }
                 ]
             },
             "cafe1": {
@@ -229,8 +237,7 @@
                 "panorama": "14_cafeteria_path_1.jpg",
                 "yaw": -42.9,
                 "hotSpots": [
-                    { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "⬆️", "sceneId": "cafe2", "cssClass": "forward-hotspot" },
-                    { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "", "sceneId": "cafe2", "cssClass": "invisible-hotspot" }
                 ]
             },
             "cafe2": {
@@ -239,8 +246,7 @@
                 "panorama": "15_cafeteria_path_2.jpg",
                 "yaw": -50.7,
                 "hotSpots": [
-                    { "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "⬆️", "sceneId": "cafe3", "cssClass": "forward-hotspot" },
-                    { "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "⬅️", "sceneId": "cafe1", "cssClass": "backward-hotspot" }
+                    { "pitch": -1.0, "yaw": -50.7, "type": "scene", "text": "", "sceneId": "cafe3", "cssClass": "invisible-hotspot" }
                 ]
             },
             "cafe3": {
@@ -249,8 +255,7 @@
                 "panorama": "16_cafeteria_path_3.jpg",
                 "yaw": 132.9,
                 "hotSpots": [
-                    { "pitch": -13.6, "yaw": 132.9, "type": "info", "text": "🍽️ سلف سرویس" },
-                    { "pitch": -13.6, "yaw": 132.9, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "cafe2", "cssClass": "backward-hotspot" }
+                    { "pitch": -13.6, "yaw": 132.9, "type": "info", "text": "🍽️ سلف سرویس" }
                 ]
             },
             "fac1": {
@@ -259,8 +264,7 @@
                 "panorama": "17_faculties_path_1.jpg",
                 "yaw": 0.4,
                 "hotSpots": [
-                    { "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "⬆️", "sceneId": "fac2", "cssClass": "forward-hotspot" },
-                    { "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "⬅️", "sceneId": "scene2", "cssClass": "backward-hotspot" }
+                    { "pitch": -8.6, "yaw": 0.4, "type": "scene", "text": "", "sceneId": "fac2", "cssClass": "invisible-hotspot" }
                 ]
             },
             "fac2": {
@@ -269,8 +273,7 @@
                 "panorama": "18_faculties_path_2.jpg",
                 "yaw": -36.9,
                 "hotSpots": [
-                    { "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "🚪", "sceneId": "fac3", "cssClass": "forward-hotspot" },
-                    { "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "⬅️", "sceneId": "fac1", "cssClass": "backward-hotspot" }
+                    { "pitch": -6.1, "yaw": -36.9, "type": "scene", "text": "", "sceneId": "fac3", "cssClass": "invisible-hotspot" }
                 ]
             },
             "fac3": {
@@ -279,14 +282,52 @@
                 "panorama": "20_inside_faculty.jpg",
                 "yaw": 0,
                 "hotSpots": [
-                    { "pitch": 0, "yaw": 0, "type": "info", "text": "🏫 دانشکده" },
-                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "⬅️ بازگشت", "sceneId": "fac2", "cssClass": "backward-hotspot" }
+                    { "pitch": 0, "yaw": 0, "type": "info", "text": "🏫 دانشکده" }
                 ]
             }
         }
     });
 
-    // قابلیت زوم (اختیاری) - با کلیک و زوم کار می‌کند
+    // ✅ دکمه‌های ناوبری ثابت در بالا
+    document.getElementById('btn-forward').addEventListener('click', function() {
+        const currentScene = viewer.getScene();
+        const scenes = viewer.getConfig().scenes;
+        if (scenes[currentScene] && scenes[currentScene].hotSpots) {
+            const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
+            if (forwardHotspot) {
+                viewer.loadScene(forwardHotspot.sceneId);
+            }
+        }
+    });
+
+    document.getElementById('btn-backward').addEventListener('click', function() {
+        // برای دکمه بازگشت، باید بدانیم از کجا آمده‌ایم. 
+        // یک راه ساده: نگه داشتن تاریخچه در آرایه
+        if (historyStack.length > 1) {
+            historyStack.pop(); // حذف صحنه فعلی
+            const prevScene = historyStack[historyStack.length - 1];
+            viewer.loadScene(prevScene);
+        }
+    });
+
+    // ✅ تاریخچه صحنه‌ها برای دکمه بازگشت
+    let historyStack = ['scene1']; // صحنه اول
+    viewer.on('scenechange', function(sceneId) {
+        // اضافه کردن صحنه جدید به تاریخچه (اگر تکراری نباشد)
+        if (historyStack[historyStack.length - 1] !== sceneId) {
+            historyStack.push(sceneId);
+        }
+        
+        // به‌روزرسانی نقشه
+        const coords = mapCoordinates[sceneId];
+        if (coords) {
+            const marker = document.getElementById('marker');
+            marker.style.top = coords.top;
+            marker.style.left = coords.left;
+        }
+    });
+
+    // قابلیت زوم (اختیاری)
     let lastHfov = 100;
     const ZOOM_IN_THRESHOLD = 70;
     const ZOOM_OUT_THRESHOLD = 110;
@@ -303,7 +344,7 @@
         if (hfov < ZOOM_IN_THRESHOLD && lastHfov >= ZOOM_IN_THRESHOLD) {
             if (scenes[currentScene] && scenes[currentScene].hotSpots) {
                 const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
-                    if (hs.type !== 'scene' || hs.cssClass !== 'forward-hotspot') return false;
+                    if (hs.type !== 'scene') return false;
                     const yawDiff = Math.abs(hs.yaw - currentYaw);
                     return Math.min(yawDiff, 360 - yawDiff) < 30;
                 });
@@ -317,7 +358,7 @@
         else if (hfov > ZOOM_OUT_THRESHOLD && lastHfov <= ZOOM_OUT_THRESHOLD) {
             if (scenes[currentScene] && scenes[currentScene].hotSpots) {
                 const targetHotspot = scenes[currentScene].hotSpots.find(hs => {
-                    if (hs.type !== 'scene' || hs.cssClass !== 'backward-hotspot') return false;
+                    if (hs.type !== 'scene') return false;
                     const yawDiff = Math.abs(hs.yaw - currentYaw);
                     return Math.min(yawDiff, 360 - yawDiff) < 30;
                 });
@@ -351,15 +392,6 @@
         'fac2': { top: '50%', left: '10%' },
         'fac3': { top: '40%', left: '5%' }
     };
-
-    viewer.on('scenechange', function(sceneId) {
-        const coords = mapCoordinates[sceneId];
-        if (coords) {
-            const marker = document.getElementById('marker');
-            marker.style.top = coords.top;
-            marker.style.left = coords.left;
-        }
-    });
 
     setTimeout(function() {
         var scenes = viewer.getConfig().scenes;
