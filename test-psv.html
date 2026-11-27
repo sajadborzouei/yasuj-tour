@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تست Photo Sphere Viewer - تور مجازی یاسوج</title>
+    
+    <!-- کتابخانه اصلی Photo Sphere Viewer -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/core@5.7.1/index.js"></script>
+    
+    <!-- افزونه Markers برای هات‌اسپات‌ها -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@photo-sphere-viewer/markers-plugin@5.7.1/index.js"></script>
+    
+    <style>
+        body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
+        #viewer { width: 100vw; height: 100vh; }
+        
+        /* استایل دکمه‌های روی عکس */
+        .marker-btn {
+            background-color: rgba(255, 0, 0, 0.8);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255,0,0,0.9);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .marker-btn:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 0, 0, 1);
+        }
+        
+        /* پیام راهنما */
+        #hint {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.7); color: #fff;
+            padding: 8px 15px; border-radius: 5px;
+            z-index: 1000; font-size: 14px;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="hint">تست Photo Sphere Viewer | با ماوس بچرخانید و کلیک کنید</div>
+<div id="viewer"></div>
+
+<script>
+    // تعریف صحنه‌ها (فقط دو صحنه برای تست)
+    const scenes = {
+        "scene1": {
+            panorama: "01_outside_entrance.jpg",
+            caption: "۱. بیرون ورودی پردیس",
+            markers: [
+                {
+                    id: "to-scene2",
+                    position: { yaw: -70.3, pitch: -0.9 },
+                    html: "<div class='marker-btn'>➡️</div>",
+                    anchor: "center center",
+                    tooltip: "ورود به محوطه",
+                    // در PSV برای رفتن به صحنه بعد از کلیک، از رویداد استفاده می‌کنیم
+                    click: () => loadScene("scene2")
+                }
+            ]
+        },
+        "scene2": {
+            panorama: "02_inside_entrance.jpg",
+            caption: "۲. داخل ورودی پردیس",
+            markers: [
+                {
+                    id: "to-reg1",
+                    position: { yaw: -60.0, pitch: -9.7 },
+                    html: "<div class='marker-btn' style='background-color: rgba(255, 0, 0, 0.8);'>🔴</div>",
+                    anchor: "center center",
+                    tooltip: "مسیر ثبت‌نام",
+                    click: () => loadScene("scene3")
+                },
+                {
+                    id: "to-fac1",
+                    position: { yaw: -151.7, pitch: -3.2 },
+                    html: "<div class='marker-btn' style='background-color: rgba(0, 200, 0, 0.8);'>🟢</div>",
+                    anchor: "center center",
+                    tooltip: "مسیر دانشکده",
+                    click: () => loadScene("scene4")
+                }
+            ]
+        },
+        "scene3": {
+            panorama: "03_reg_path_1.jpg",
+            caption: "۳. مسیر ثبت‌نام ۱",
+            markers: [
+                {
+                    id: "back-scene2",
+                    position: { yaw: 180, pitch: -5 },
+                    html: "<div class='marker-btn' style='background-color: rgba(0, 102, 255, 0.8);'>⬅️</div>",
+                    anchor: "center center",
+                    tooltip: "بازگشت",
+                    click: () => loadScene("scene2")
+                }
+            ]
+        },
+        "scene4": {
+            panorama: "17_faculties_path_1.jpg",
+            caption: "۱۵. مسیر دانشکده‌ها ۱",
+            markers: [
+                {
+                    id: "back-scene2",
+                    position: { yaw: 180, pitch: -5 },
+                    html: "<div class='marker-btn' style='background-color: rgba(0, 102, 255, 0.8);'>⬅️</div>",
+                    anchor: "center center",
+                    tooltip: "بازگشت",
+                    click: () => loadScene("scene2")
+                }
+            ]
+        }
+    };
+
+    let viewer;
+
+    // تابع برای بارگذاری صحنه جدید
+    function loadScene(sceneId) {
+        const scene = scenes[sceneId];
+        if (!scene) return;
+        
+        viewer.setPanorama(scene.panorama, {
+            caption: scene.caption,
+            markers: scene.markers.map(m => ({
+                id: m.id,
+                position: m.position,
+                html: m.html,
+                anchor: m.anchor,
+                tooltip: m.tooltip,
+                // PSV از رویداد click برای مارکرها استفاده می‌کند
+                // در اینجا از یک ترفند برای اتصال تابع استفاده می‌کنیم
+            }))
+        }).then(() => {
+            // پس از لود شدن، رویداد کلیک مارکرها را متصل می‌کنیم
+            setTimeout(() => {
+                // این بخش نیاز به تنظیمات دقیق‌تر PSV دارد
+                // فعلاً برای تست، کلیک روی مارکرها را از طریق کنسول شبیه‌سازی می‌کنیم
+            }, 100);
+        });
+    }
+
+    // مقداردهی اولیه
+    viewer = new PhotoSphereViewer.Viewer({
+        container: document.getElementById('viewer'),
+        panorama: scenes["scene1"].panorama,
+        caption: scenes["scene1"].caption,
+        loadingImg: null,
+        loadingTxt: "در حال بارگذاری...",
+        touchmoveTwoFingers: true,
+        mousewheelCtrlKey: false, // فعال کردن زوم با اسکرول
+        defaultYaw: 0,
+        defaultPitch: 0,
+        minFov: 30,
+        maxFov: 90,
+        plugins: [
+            [PhotoSphereViewer.MarkersPlugin, {
+                markers: scenes["scene1"].markers.map(m => ({
+                    id: m.id,
+                    position: m.position,
+                    html: m.html,
+                    anchor: m.anchor,
+                    tooltip: m.tooltip,
+                    // در اینجا می‌توانیم رویداد کلیک را مستقیم تعریف کنیم (در نسخه‌های جدید)
+                    // اما برای اطمینان، از روش زیر استفاده می‌کنیم:
+                }))
+            }]
+        ]
+    });
+
+    // برای اتصال کلیک مارکرها به تغییر صحنه، باید از رویدادهای PSV استفاده کنیم
+    // این بخش نیاز به تنظیمات بیشتری دارد که در مرحله بعد انجام می‌دهیم
+</script>
+
+</body>
+</html>
