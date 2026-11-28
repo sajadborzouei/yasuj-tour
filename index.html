@@ -105,7 +105,6 @@
             transform: scale(1.1);
         }
 
-        /* ✅ دکمه‌های ثابت */
         #fixed-buttons {
             position: absolute;
             bottom: 30px;
@@ -175,7 +174,6 @@
     <button class="nav-btn backward" id="btn-backward" title="بازگشت">⬅️</button>
 </div>
 
-<!-- ✅ دکمه‌های ثابت -->
 <div id="fixed-buttons">
     <button class="fixed-btn reg" id="btn-reg" title="ثبت‌نام">🔴</button>
     <button class="fixed-btn cafe" id="btn-cafe" title="سلف سرویس">🟢</button>
@@ -230,7 +228,7 @@
                 ]
             },
             "reg1": {
-                "title": "۴. مسیر ثبت‌نام ۱",
+                "title": "۷. مسیر ثبت‌نام ۱",
                 "type": "equirectangular",
                 "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
@@ -239,48 +237,12 @@
                 ]
             },
             "reg2": {
-                "title": "۵. مسیر ثبت‌نام ۲",
+                "title": "۸. مسیر ثبت‌نام ۲",
                 "type": "equirectangular",
                 "panorama": "04_reg_path_2.jpg",
                 "yaw": -45.2,
                 "hotSpots": [
-                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg3", "cssClass": "invisible-hotspot" }
-                ]
-            },
-            "reg3": {
-                "title": "۶. مسیر ثبت‌نام ۳",
-                "type": "equirectangular",
-                "panorama": "05_reg_path_3.jpg",
-                "yaw": -90.3,
-                "hotSpots": [
-                    { "pitch": 2.0, "yaw": -90.3, "type": "scene", "text": "", "sceneId": "reg4", "cssClass": "invisible-hotspot" }
-                ]
-            },
-            "reg4": {
-                "title": "۷. مسیر ثبت‌نام ۴",
-                "type": "equirectangular",
-                "panorama": "06_reg_path_4.jpg",
-                "yaw": -23.3,
-                "hotSpots": [
-                    { "pitch": -3.1, "yaw": -23.3, "type": "scene", "text": "", "sceneId": "reg5", "cssClass": "invisible-hotspot" }
-                ]
-            },
-            "reg5": {
-                "title": "۸. مسیر ثبت‌نام ۵",
-                "type": "equirectangular",
-                "panorama": "07_reg_path_5.jpg",
-                "yaw": -31.7,
-                "hotSpots": [
-                    { "pitch": -2.3, "yaw": -31.7, "type": "scene", "text": "", "sceneId": "reg6", "cssClass": "invisible-hotspot" }
-                ]
-            },
-            "reg6": {
-                "title": "۹. مسیر ثبت‌نام ۶",
-                "type": "equirectangular",
-                "panorama": "08_reg_path_6.jpg",
-                "yaw": -48.8,
-                "hotSpots": [
-                    { "pitch": -3.5, "yaw": -48.8, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "invisible-hotspot" }
+                    { "pitch": -3.7, "yaw": -45.2, "type": "scene", "text": "", "sceneId": "reg_lib", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg_lib": {
@@ -302,7 +264,7 @@
                 ]
             },
             "reg_room": {
-                "title": "۱۲. اتاق ثبت‌نام (مقصد)",
+                "title": "۱۳. اتاق ثبت‌نام (مقصد)",
                 "type": "equirectangular",
                 "panorama": "13_registration_room.jpg",
                 "yaw": 0,
@@ -311,7 +273,7 @@
                 ]
             },
             "cafe1": {
-                "title": "۱۳. مسیر سلف سرویس ۱",
+                "title": "۱۴. مسیر سلف سرویس ۱",
                 "type": "equirectangular",
                 "panorama": "14_cafeteria_path_1.jpg",
                 "yaw": -42.9,
@@ -320,7 +282,7 @@
                 ]
             },
             "cafe2": {
-                "title": "۱۴. مسیر سلف سرویس ۲",
+                "title": "۱۵. مسیر سلف سرویس ۲",
                 "type": "equirectangular",
                 "panorama": "15_cafeteria_path_2.jpg",
                 "yaw": -50.7,
@@ -329,7 +291,7 @@
                 ]
             },
             "cafe3": {
-                "title": "۱۵. مسیر سلف سرویس ۳",
+                "title": "۱۶. مسیر سلف سرویس ۳",
                 "type": "equirectangular",
                 "panorama": "16_cafeteria_path_3.jpg",
                 "yaw": 132.9,
@@ -377,6 +339,12 @@
         }, duration + 100);
     }
 
+    // ✅ تابع کمکی: پیدا کردن جهت برگشت به دوشاخه
+    function getBackToForkYaw() {
+        // جهت تقریبی برای برگشت به دوشاخه (می‌توانید تنظیم کنید)
+        return 180; 
+    }
+
     // ✅ دکمه ادامه
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
@@ -403,30 +371,43 @@
         }
     });
 
-    // ✅ دکمه ثبت‌نام (با منطق هوشمند)
+    // ✅ دکمه ثبت‌نام (با منطق جدید: بازگشت به دوشاخه در صورت نیاز)
     document.getElementById('btn-reg').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         
         // اگر در مسیر ثبت‌نام هستیم، کاری نکن
-        if (currentScene.startsWith('reg') || currentScene === 'reg_room') return;
+        if (currentScene.startsWith('reg')) return;
         
-        if (currentScene === 'scene1') {
-            // از عکس اول به دوم برو
-            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-            goToScene('scene2', -60.0, -9.7);
-            setTimeout(() => {
-                historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+        // اگر در صحنه اول یا دوم هستیم
+        if (currentScene === 'scene1' || currentScene === 'scene2' || currentScene === 'fork') {
+            // مستقیم به دوشاخه و بعد ثبت‌نام
+            if (currentScene === 'scene1') {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('scene2', -60.0, -9.7);
+                setTimeout(() => {
+                    historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                    goToScene('fork', 9.4, -4.1);
+                    setTimeout(() => {
+                        historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                        goToScene('reg1', 9.4, -4.1);
+                    }, 2500);
+                }, 2500);
+            } else if (currentScene === 'scene2') {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                 goToScene('fork', 9.4, -4.1);
                 setTimeout(() => {
                     historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                     goToScene('reg1', 9.4, -4.1);
                 }, 2500);
-            }, 2500);
+            } else {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('reg1', 9.4, -4.1);
+            }
             return;
         }
         
-        if (currentScene === 'scene2') {
-            // از ورودی به دوشاخه و بعد ثبت‌نام
+        // اگر در مسیر سلف هستیم، ابتدا به دوشاخه برگرد
+        if (currentScene.startsWith('cafe')) {
             historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
             goToScene('fork', 9.4, -4.1);
             setTimeout(() => {
@@ -435,52 +416,50 @@
             }, 2500);
             return;
         }
-        
-        if (currentScene === 'fork' || currentScene.startsWith('cafe')) {
-            // از دوشاخه یا سلف به ثبت‌نام
-            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-            goToScene('reg1', 9.4, -4.1);
-            return;
-        }
     });
 
-    // ✅ دکمه سلف سرویس (با منطق هوشمند)
+    // ✅ دکمه سلف سرویس (با منطق جدید: بازگشت به دوشاخه در صورت نیاز)
     document.getElementById('btn-cafe').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         
         // اگر در مسیر سلف هستیم، کاری نکن
         if (currentScene.startsWith('cafe')) return;
         
-        if (currentScene === 'scene1') {
-            // از عکس اول به دوم برو
-            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-            goToScene('scene2', -60.0, -9.7);
-            setTimeout(() => {
-                historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+        // اگر در صحنه اول یا دوم یا دوشاخه هستیم
+        if (currentScene === 'scene1' || currentScene === 'scene2' || currentScene === 'fork') {
+            if (currentScene === 'scene1') {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('scene2', -60.0, -9.7);
+                setTimeout(() => {
+                    historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                    goToScene('fork', 9.4, -4.1);
+                    setTimeout(() => {
+                        historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                        goToScene('cafe1', -42.9, 1.1);
+                    }, 2500);
+                }, 2500);
+            } else if (currentScene === 'scene2') {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                 goToScene('fork', 9.4, -4.1);
                 setTimeout(() => {
                     historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                     goToScene('cafe1', -42.9, 1.1);
                 }, 2500);
-            }, 2500);
+            } else {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('cafe1', -42.9, 1.1);
+            }
             return;
         }
         
-        if (currentScene === 'scene2') {
-            // از ورودی به دوشاخه و بعد سلف
+        // اگر در مسیر ثبت‌نام هستیم، ابتدا به دوشاخه برگرد
+        if (currentScene.startsWith('reg')) {
             historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
             goToScene('fork', 9.4, -4.1);
             setTimeout(() => {
                 historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                 goToScene('cafe1', -42.9, 1.1);
             }, 2500);
-            return;
-        }
-        
-        if (currentScene === 'fork' || currentScene.startsWith('reg')) {
-            // از دوشاخه یا ثبت‌نام به سلف
-            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-            goToScene('cafe1', -42.9, 1.1);
             return;
         }
     });
@@ -503,10 +482,6 @@
         'fork': { top: '63.8%', left: '42.9%' },
         'reg1': { top: '63.8%', left: '42.9%' },
         'reg2': { top: '72.4%', left: '51.9%' },
-        'reg3': { top: '71.2%', left: '64.5%' },
-        'reg4': { top: '65.8%', left: '67.4%' },
-        'reg5': { top: '48.2%', left: '64.9%' },
-        'reg6': { top: '44.9%', left: '79.7%' },
         'reg_lib': { top: '43.9%', left: '82.2%' },
         'reg_room_path': { top: '48.8%', left: '83.6%' },
         'reg_room': { top: '53.6%', left: '84.2%' },
