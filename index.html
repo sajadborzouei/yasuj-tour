@@ -105,29 +105,55 @@
             transform: scale(1.1);
         }
 
-        /* ✅ دکمه ثابت سلف سرویس در گوشه پایین-راست */
-        #cafeteria-btn {
+        /* ✅ دکمه‌های ثابت پایین */
+        #fixed-buttons {
             position: absolute;
             bottom: 30px;
             right: 30px;
+            display: flex;
+            gap: 15px;
             z-index: 2000;
-            background-color: rgba(0, 200, 0, 0.9);
-            border: 3px solid #fff;
+        }
+
+        .fixed-btn {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            border: 3px solid #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 30px;
             color: #fff;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.9);
             cursor: pointer;
             transition: all 0.2s;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
-        #cafeteria-btn:hover {
+
+        .fixed-btn.reg {
+            background-color: rgba(255, 0, 0, 0.9);
+            box-shadow: 0 0 20px rgba(255,0,0,0.9);
+        }
+        .fixed-btn.reg:hover {
+            background-color: rgba(255, 0, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .fixed-btn.cafe {
+            background-color: rgba(0, 200, 0, 0.9);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.9);
+        }
+        .fixed-btn.cafe:hover {
             background-color: rgba(0, 255, 0, 1);
+            transform: scale(1.1);
+        }
+
+        .fixed-btn.exit {
+            background-color: rgba(0, 102, 255, 0.9);
+            box-shadow: 0 0 20px rgba(0,102,255,0.9);
+        }
+        .fixed-btn.exit:hover {
+            background-color: rgba(0, 102, 255, 1);
             transform: scale(1.1);
         }
 
@@ -138,40 +164,23 @@
             cursor: pointer;
             transform: translate(-50%, -50%) !important;
         }
-
-        .green-hotspot {
-            background-color: rgba(0, 200, 0, 0.9) !important;
-            border: 3px solid #fff !important;
-            border-radius: 50% !important;
-            width: 80px !important;
-            height: 80px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            font-size: 40px !important;
-            color: #fff !important;
-            box-shadow: 0 0 25px rgba(0, 255, 0, 0.9) !important;
-            cursor: pointer !important;
-            transform: translate(-50%, -50%) !important;
-            transition: transform 0.2s !important;
-        }
-        .green-hotspot:hover {
-            transform: translate(-50%, -50%) scale(1.1) !important;
-            background-color: rgba(0, 255, 0, 1) !important;
-        }
     </style>
 </head>
 <body>
 
-<div id="hint">🔴 ادامه مسیر | 🔵 بازگشت | 🟢 سلف سرویس</div>
+<div id="hint">🔴 ثبت‌نام | 🟢 سلف سرویس | 🔵 خروج</div>
 
 <div id="nav-buttons">
     <button class="nav-btn forward" id="btn-forward" title="ادامه مسیر">➡️</button>
     <button class="nav-btn backward" id="btn-backward" title="بازگشت">⬅️</button>
 </div>
 
-<!-- ✅ دکمه ثابت سلف سرویس -->
-<button id="cafeteria-btn" title="سلف سرویس">🍽️</button>
+<!-- ✅ دکمه‌های ثابت -->
+<div id="fixed-buttons">
+    <button class="fixed-btn reg" id="btn-reg" title="ثبت‌نام">🔴</button>
+    <button class="fixed-btn cafe" id="btn-cafe" title="سلف سرویس">🟢</button>
+    <button class="fixed-btn exit" id="btn-exit" title="خروج">🔵</button>
+</div>
 
 <div id="panorama"></div>
 
@@ -207,11 +216,24 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" }
+                    // مسیر به سمت دوشاخه
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "fork", "cssClass": "invisible-hotspot" }
+                ]
+            },
+            "fork": {
+                "title": "۳. دوشاخه (انتخاب مسیر)",
+                "type": "equirectangular",
+                "panorama": "03_reg_path_1.jpg", // از این عکس به عنوان دوشاخه استفاده می‌کنیم
+                "yaw": 9.4,
+                "hotSpots": [
+                    // مسیر ثبت‌نام
+                    { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
+                    // مسیر سلف سرویس
+                    { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "cafe1", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg1": {
-                "title": "۳. مسیر ثبت‌نام ۱",
+                "title": "۴. مسیر ثبت‌نام ۱",
                 "type": "equirectangular",
                 "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
@@ -220,7 +242,7 @@
                 ]
             },
             "reg2": {
-                "title": "۴. مسیر ثبت‌نام ۲",
+                "title": "۵. مسیر ثبت‌نام ۲",
                 "type": "equirectangular",
                 "panorama": "04_reg_path_2.jpg",
                 "yaw": -45.2,
@@ -229,7 +251,7 @@
                 ]
             },
             "reg3": {
-                "title": "۵. مسیر ثبت‌نام ۳",
+                "title": "۶. مسیر ثبت‌نام ۳",
                 "type": "equirectangular",
                 "panorama": "05_reg_path_3.jpg",
                 "yaw": -90.3,
@@ -238,7 +260,7 @@
                 ]
             },
             "reg4": {
-                "title": "۶. مسیر ثبت‌نام ۴",
+                "title": "۷. مسیر ثبت‌نام ۴",
                 "type": "equirectangular",
                 "panorama": "06_reg_path_4.jpg",
                 "yaw": -23.3,
@@ -247,7 +269,7 @@
                 ]
             },
             "reg5": {
-                "title": "۷. مسیر ثبت‌نام ۵",
+                "title": "۸. مسیر ثبت‌نام ۵",
                 "type": "equirectangular",
                 "panorama": "07_reg_path_5.jpg",
                 "yaw": -31.7,
@@ -256,7 +278,7 @@
                 ]
             },
             "reg6": {
-                "title": "۸. مسیر ثبت‌نام ۶",
+                "title": "۹. مسیر ثبت‌نام ۶",
                 "type": "equirectangular",
                 "panorama": "08_reg_path_6.jpg",
                 "yaw": -48.8,
@@ -265,7 +287,7 @@
                 ]
             },
             "reg_lib": {
-                "title": "۹. سالن ساختمان کتابخانه",
+                "title": "۱۰. سالن ساختمان کتابخانه",
                 "type": "equirectangular",
                 "panorama": "10_library_hall.jpg",
                 "yaw": 47.1,
@@ -274,7 +296,7 @@
                 ]
             },
             "reg_room_path": {
-                "title": "۱۰. مسیر اتاق ثبت‌نام",
+                "title": "۱۱. مسیر اتاق ثبت‌نام",
                 "type": "equirectangular",
                 "panorama": "11_reg_room_path_1.jpg",
                 "yaw": 13.6,
@@ -283,7 +305,7 @@
                 ]
             },
             "reg_room": {
-                "title": "۱۱. اتاق ثبت‌نام (مقصد)",
+                "title": "۱۲. اتاق ثبت‌نام (مقصد)",
                 "type": "equirectangular",
                 "panorama": "13_registration_room.jpg",
                 "yaw": 0,
@@ -292,7 +314,7 @@
                 ]
             },
             "cafe1": {
-                "title": "۱۲. مسیر سلف سرویس ۱",
+                "title": "۱۳. مسیر سلف سرویس ۱",
                 "type": "equirectangular",
                 "panorama": "14_cafeteria_path_1.jpg",
                 "yaw": -42.9,
@@ -301,7 +323,7 @@
                 ]
             },
             "cafe2": {
-                "title": "۱۳. مسیر سلف سرویس ۲",
+                "title": "۱۴. مسیر سلف سرویس ۲",
                 "type": "equirectangular",
                 "panorama": "15_cafeteria_path_2.jpg",
                 "yaw": -50.7,
@@ -310,7 +332,7 @@
                 ]
             },
             "cafe3": {
-                "title": "۱۴. مسیر سلف سرویس ۳",
+                "title": "۱۵. مسیر سلف سرویس ۳",
                 "type": "equirectangular",
                 "panorama": "16_cafeteria_path_3.jpg",
                 "yaw": 132.9,
@@ -357,12 +379,12 @@
         }, duration + 100);
     }
 
-    // ✅ دکمه ادامه
+    // ✅ دکمه ادامه (همیشه به جلو در مسیر فعلی)
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-            const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene' && hs.cssClass !== 'green-hotspot');
+            const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
             if (forwardHotspot) {
                 returnYawMap[forwardHotspot.sceneId] = viewer.getYaw();
                 historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
@@ -371,7 +393,7 @@
         }
     });
 
-    // ✅ دکمه بازگشت
+    // ✅ دکمه بازگشت (مرحله به مرحله)
     document.getElementById('btn-backward').addEventListener('click', function() {
         if (historyStack.length > 1) {
             historyStack.pop();
@@ -383,30 +405,68 @@
         }
     });
 
-    // ✅ دکمه ثابت سلف سرویس (همیشه در دسترس)
-    document.getElementById('cafeteria-btn').addEventListener('click', function() {
-        // اگر در صحنه سلف هستیم، کاری نکن
+    // ✅ دکمه ثبت‌نام
+    document.getElementById('btn-reg').addEventListener('click', function() {
         const currentScene = viewer.getScene();
+        
+        // اگر در مسیر ثبت‌نام هستیم، کاری نکن
+        if (currentScene.startsWith('reg') || currentScene === 'reg_room') return;
+        
+        // اگر در مسیر سلف هستیم، ابتدا به دوشاخه برگرد
+        if (currentScene.startsWith('cafe')) {
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('fork', 9.4, -4.1);
+            setTimeout(() => {
+                historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('reg1', 9.4, -4.1);
+            }, 2500);
+            return;
+        }
+        
+        // اگر در دوشاخه یا ورودی هستیم، مستقیماً به reg1 برو
+        historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+        goToScene('reg1', 9.4, -4.1);
+    });
+
+    // ✅ دکمه سلف سرویس
+    document.getElementById('btn-cafe').addEventListener('click', function() {
+        const currentScene = viewer.getScene();
+        
+        // اگر در مسیر سلف هستیم، کاری نکن
         if (currentScene.startsWith('cafe')) return;
         
-        // رفتن به اولین صحنه سلف
-        const scenes = viewer.getConfig().scenes;
-        if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-            const cafeHotspot = scenes[currentScene].hotSpots.find(hs => hs.sceneId === 'cafe1');
-            if (cafeHotspot) {
-                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-                goToScene('cafe1', cafeHotspot.yaw, cafeHotspot.pitch);
-            } else {
-                // اگر هات‌اسپات نبود، مستقیم برو
-                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-                goToScene('cafe1', 0, 0);
-            }
+        // اگر در مسیر ثبت‌نام هستیم، ابتدا به دوشاخه برگرد
+        if (currentScene.startsWith('reg') || currentScene === 'reg_room') {
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('fork', 9.4, -4.1);
+            setTimeout(() => {
+                historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('cafe1', -42.9, 1.1);
+            }, 2500);
+            return;
+        }
+        
+        // اگر در دوشاخه یا ورودی هستیم، مستقیماً به cafe1 برو
+        historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+        goToScene('cafe1', -42.9, 1.1);
+    });
+
+    // ✅ دکمه خروج (مرحله به مرحله به عقب)
+    document.getElementById('btn-exit').addEventListener('click', function() {
+        if (historyStack.length > 1) {
+            historyStack.pop();
+            const prevEntry = historyStack[historyStack.length - 1];
+            const backYaw = returnYawMap[prevEntry.sceneId] !== undefined 
+                ? returnYawMap[prevEntry.sceneId] 
+                : prevEntry.yaw;
+            goToScene(prevEntry.sceneId, backYaw, prevEntry.pitch);
         }
     });
 
     const mapCoordinates = {
         'scene1': { top: '62.4%', left: '31.6%' },
         'scene2': { top: '55.6%', left: '35.1%' },
+        'fork': { top: '63.8%', left: '42.9%' },
         'reg1': { top: '63.8%', left: '42.9%' },
         'reg2': { top: '72.4%', left: '51.9%' },
         'reg3': { top: '71.2%', left: '64.5%' },
