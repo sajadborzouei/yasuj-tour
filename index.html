@@ -105,6 +105,32 @@
             transform: scale(1.1);
         }
 
+        /* ✅ دکمه ثابت سلف سرویس در گوشه پایین-راست */
+        #cafeteria-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            z-index: 2000;
+            background-color: rgba(0, 200, 0, 0.9);
+            border: 3px solid #fff;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.9);
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        #cafeteria-btn:hover {
+            background-color: rgba(0, 255, 0, 1);
+            transform: scale(1.1);
+        }
+
         .invisible-hotspot {
             opacity: 0 !important;
             width: 300px !important;
@@ -144,6 +170,9 @@
     <button class="nav-btn backward" id="btn-backward" title="بازگشت">⬅️</button>
 </div>
 
+<!-- ✅ دکمه ثابت سلف سرویس -->
+<button id="cafeteria-btn" title="سلف سرویس">🍽️</button>
+
 <div id="panorama"></div>
 
 <div id="minimap-container">
@@ -158,9 +187,9 @@
             "sceneFadeDuration": 1000,
             "autoLoad": true,
             "showControls": true,
-            "hfov": 100,      // ✅ زاویه دید اولیه (تقریباً کل صفحه)
-            "minHfov": 30,    // ✅ حداقل زاویه دید (بیشترین زوم)
-            "maxHfov": 120    // ✅ حداکثر زاویه دید
+            "hfov": 100,
+            "minHfov": 30,
+            "maxHfov": 120
         },
         "scenes": {
             "scene1": {
@@ -178,8 +207,7 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
-                    { "pitch": 1.1, "yaw": -42.9, "type": "scene", "text": "🟢", "sceneId": "cafe1", "cssClass": "green-hotspot" }
+                    { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" }
                 ]
             },
             "reg1": {
@@ -293,14 +321,11 @@
         }
     });
 
-    // ✅ تاریخچه دقیق برای بازگشت
+    // ✅ تاریخچه و انتقال
     let historyStack = [];
     let isTransitioning = false;
-
-    // ✅ ذخیره مسیر برگشت: برای هر صحنه، یاو صحنه قبلی که از آن آمده‌ایم
     const returnYawMap = {};
 
-    // مقداردهی اولیه
     historyStack.push({ sceneId: 'scene1', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
 
     function goToScene(targetSceneId, targetYaw, targetPitch) {
@@ -315,19 +340,17 @@
         const absDiff = Math.abs(yawDiff);
         const duration = Math.min(2000, Math.max(1000, absDiff * 10));
         
-        // چرخش به سمت هدف
         viewer.setYaw(targetYaw, duration);
         
-        // زوم و سپس لود
         setTimeout(() => {
             const currentHfov = viewer.getHfov();
-            const newHfov = Math.max(30, currentHfov / 3); // ✅ زوم بیشتر (یک‌سوم)
+            const newHfov = Math.max(30, currentHfov / 3);
             viewer.setHfov(newHfov, 800);
             
             setTimeout(() => {
                 viewer.loadScene(targetSceneId);
                 setTimeout(() => {
-                    viewer.setHfov(100, 500); // بازگشت به حالت اولیه
+                    viewer.setHfov(100, 500);
                     isTransitioning = false;
                 }, 500);
             }, 900);
@@ -339,10 +362,8 @@
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
-            // پیدا کردن هات‌اسپات مسیر اصلی (نه سلف)
             const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene' && hs.cssClass !== 'green-hotspot');
             if (forwardHotspot) {
-                // ذخیره جهت بازگشت (این نقطه، محل بازگشت به این صحنه است)
                 returnYawMap[forwardHotspot.sceneId] = viewer.getYaw();
                 historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
                 goToScene(forwardHotspot.sceneId, forwardHotspot.yaw, forwardHotspot.pitch);
@@ -355,13 +376,31 @@
         if (historyStack.length > 1) {
             historyStack.pop();
             const prevEntry = historyStack[historyStack.length - 1];
-            
-            // اگر مختصات بازگشت برای این صحنه ذخیره شده، از آن استفاده کن
             const backYaw = returnYawMap[prevEntry.sceneId] !== undefined 
                 ? returnYawMap[prevEntry.sceneId] 
                 : prevEntry.yaw;
-            
             goToScene(prevEntry.sceneId, backYaw, prevEntry.pitch);
+        }
+    });
+
+    // ✅ دکمه ثابت سلف سرویس (همیشه در دسترس)
+    document.getElementById('cafeteria-btn').addEventListener('click', function() {
+        // اگر در صحنه سلف هستیم، کاری نکن
+        const currentScene = viewer.getScene();
+        if (currentScene.startsWith('cafe')) return;
+        
+        // رفتن به اولین صحنه سلف
+        const scenes = viewer.getConfig().scenes;
+        if (scenes[currentScene] && scenes[currentScene].hotSpots) {
+            const cafeHotspot = scenes[currentScene].hotSpots.find(hs => hs.sceneId === 'cafe1');
+            if (cafeHotspot) {
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('cafe1', cafeHotspot.yaw, cafeHotspot.pitch);
+            } else {
+                // اگر هات‌اسپات نبود، مستقیم برو
+                historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('cafe1', 0, 0);
+            }
         }
     });
 
