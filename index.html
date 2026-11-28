@@ -11,29 +11,47 @@
         body { margin: 0; padding: 0; font-family: Tahoma, sans-serif; overflow: hidden; background-color: #000; }
         #panorama { width: 100vw; height: 100vh; }
         
+        /* ✅ نقشه بزرگ‌تر (350px) */
         #minimap-container {
             position: absolute;
             bottom: 20px;
             left: 20px;
-            width: 250px;
+            width: 350px; /* بزرگ‌تر شد */
             border: 3px solid #fff;
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.9);
             z-index: 1000;
             overflow: hidden;
             background: #333;
         }
         #minimap-image { width: 100%; height: auto; display: block; opacity: 0.9; }
+        
+        /* ✅ نشانگر به شکل فلش (Arrow Head) */
         #marker {
             position: absolute;
-            width: 15px; height: 15px;
-            background-color: #ff0000;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.8s ease;
-            top: 85%; left: 15%;
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 25px solid #ff0000; /* بدنه فلش */
+            transform: translate(-50%, -50%) rotate(0deg); /* برای چرخش */
+            transition: all 0.5s ease;
+            top: 62.4%; left: 31.6%;
+            filter: drop-shadow(0 0 5px rgba(255,0,0,0.8));
+            z-index: 1001;
         }
+        /* خط زیر فلش برای وضوح بیشتر */
+        #marker::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -2px;
+            width: 4px;
+            height: 10px;
+            background: #fff;
+            border-radius: 2px;
+        }
+        
         #hint {
             position: absolute; top: 15px; right: 15px;
             background: rgba(0,0,0,0.7); color: #fff;
@@ -275,21 +293,25 @@
     let historyStack = ['scene1'];
 
     const mapCoordinates = {
-        'scene1': { top: '85%', left: '15%' },
-        'scene2': { top: '80%', left: '20%' },
-        'reg1': { top: '75%', left: '25%' },
-        'reg2': { top: '70%', left: '30%' },
-        'reg3': { top: '65%', left: '35%' },
-        'reg4': { top: '60%', left: '40%' },
-        'reg5': { top: '55%', left: '45%' },
-        'reg6': { top: '50%', left: '50%' },
-        'reg_lib': { top: '45%', left: '55%' },
-        'reg_room_path': { top: '40%', left: '60%' },
-        'reg_room': { top: '35%', left: '65%' },
-        'cafe1': { top: '70%', left: '70%' },
-        'cafe2': { top: '60%', left: '75%' },
-        'cafe3': { top: '50%', left: '80%' }
+        'scene1': { top: '62.4%', left: '31.6%' },
+        'scene2': { top: '55.6%', left: '35.1%' },
+        'reg1': { top: '63.8%', left: '42.9%' },
+        'reg2': { top: '72.4%', left: '51.9%' },
+        'reg3': { top: '71.2%', left: '64.5%' },
+        'reg4': { top: '65.8%', left: '67.4%' },
+        'reg5': { top: '48.2%', left: '64.9%' },
+        'reg6': { top: '44.9%', left: '79.7%' },
+        'reg_lib': { top: '43.9%', left: '82.2%' },
+        'reg_room_path': { top: '48.8%', left: '83.6%' },
+        'reg_room': { top: '53.6%', left: '84.2%' },
+        'cafe1': { top: '24.7%', left: '55.9%' },
+        'cafe2': { top: '13.4%', left: '67.8%' },
+        'cafe3': { top: '2.9%', left: '77.1%' }
     };
+
+    // ✅ تنظیم جهت فلش بر اساس تغییر موقعیت
+    let lastTop = null;
+    let lastLeft = null;
 
     viewer.on('scenechange', function(sceneId) {
         if (historyStack[historyStack.length - 1] !== sceneId) {
@@ -298,10 +320,39 @@
         const coords = mapCoordinates[sceneId];
         if (coords) {
             const marker = document.getElementById('marker');
+            
+            // محاسبه زاویه حرکت
+            if (lastTop !== null && lastLeft !== null) {
+                const topNum = parseFloat(coords.top);
+                const leftNum = parseFloat(coords.left);
+                const lastTopNum = parseFloat(lastTop);
+                const lastLeftNum = parseFloat(lastLeft);
+                
+                // محاسبه زاویه (زاویه بین دو نقطه)
+                const dx = leftNum - lastLeftNum;
+                const dy = topNum - lastTopNum;
+                const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90; // +90 برای تنظیم جهت فلش
+                
+                // چرخش فلش
+                marker.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+            }
+            
+            // به‌روزرسانی موقعیت
             marker.style.top = coords.top;
             marker.style.left = coords.left;
+            
+            lastTop = coords.top;
+            lastLeft = coords.left;
         }
     });
+
+    // تنظیم اولیه موقعیت و جهت
+    setTimeout(() => {
+        const marker = document.getElementById('marker');
+        marker.style.top = '62.4%';
+        marker.style.left = '31.6%';
+        marker.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+    }, 100);
 
     setTimeout(function() {
         var scenes = viewer.getConfig().scenes;
