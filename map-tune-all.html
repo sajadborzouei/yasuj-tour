@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تنظیم مختصات همه نقاط روی نقشه</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: Tahoma; background: #222; color: #fff; }
+        #map-container { position: relative; display: inline-block; border: 3px solid #fff; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        #map-image { display: block; max-width: 100%; height: auto; }
+        .marker { position: absolute; width: 20px; height: 20px; background: red; border: 3px solid white; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold; }
+        .marker.scene1 { background: #ff0000; }
+        .marker.scene2 { background: #ff6600; }
+        .marker.reg1 { background: #ffcc00; color: #000; }
+        .marker.reg2 { background: #66ff00; color: #000; }
+        .marker.reg3 { background: #00ffcc; color: #000; }
+        .marker.reg4 { background: #00ccff; color: #000; }
+        .marker.reg5 { background: #0066ff; }
+        .marker.reg6 { background: #3300ff; }
+        .marker.reg_lib { background: #9900ff; }
+        .marker.reg_room_path { background: #ff00cc; }
+        .marker.reg_room { background: #ff0066; }
+        .marker.cafe1 { background: #ffffff; color: #000; }
+        .marker.cafe2 { background: #cccccc; color: #000; }
+        .marker.cafe3 { background: #999999; color: #000; }
+
+        #info { margin-top: 20px; font-size: 16px; }
+        #output-area { width: 100%; height: 200px; margin-top: 10px; font-family: monospace; font-size: 14px; background: #111; color: #0f0; border: 1px solid #444; padding: 10px; }
+        .highlight { color: #00ff00; font-weight: bold; }
+        button { padding: 10px 20px; font-size: 16px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #45a049; }
+        .btn-reset { background: #f44336; margin-right: 10px; }
+        .btn-reset:hover { background: #d32f2f; }
+    </style>
+</head>
+<body>
+    <h2>📍 تنظیم مختصات همه نقاط روی نقشه</h2>
+    <p>برای هر نقطه، روی نقشه کلیک کنید. نقطه قرمز رنگ با اسم صحنه ظاهر می‌شود. در نهایت روی دکمه <b>کپی خروجی</b> کلیک کنید.</p>
+    <p style="color: #aaa; font-size: 14px;">اگر اشتباه کلیک کردید، دوباره روی همان نقطه کلیک کنید تا موقعیت جدید ثبت شود.</p>
+
+    <div id="map-container">
+        <img src="map.jpg" id="map-image" alt="نقشه">
+    </div>
+
+    <div id="info">
+        <div style="margin-bottom: 10px;">
+            <label for="scene-select">انتخاب صحنه:</label>
+            <select id="scene-select" style="font-size: 16px; padding: 5px;">
+                <option value="scene1">scene1 - بیرون ورودی</option>
+                <option value="scene2">scene2 - داخل ورودی</option>
+                <option value="reg1">reg1 - مسیر ثبت‌نام ۱</option>
+                <option value="reg2">reg2 - مسیر ثبت‌نام ۲</option>
+                <option value="reg3">reg3 - مسیر ثبت‌نام ۳</option>
+                <option value="reg4">reg4 - مسیر ثبت‌نام ۴</option>
+                <option value="reg5">reg5 - مسیر ثبت‌نام ۵</option>
+                <option value="reg6">reg6 - مسیر ثبت‌نام ۶</option>
+                <option value="reg_lib">reg_lib - سالن کتابخانه</option>
+                <option value="reg_room_path">reg_room_path - مسیر اتاق ثبت‌نام</option>
+                <option value="reg_room">reg_room - اتاق ثبت‌نام</option>
+                <option value="cafe1">cafe1 - مسیر سلف ۱</option>
+                <option value="cafe2">cafe2 - مسیر سلف ۲</option>
+                <option value="cafe3">cafe3 - مسیر سلف ۳</option>
+            </select>
+        </div>
+
+        <div>مختصات فعلی: <span id="current-coords" class="highlight">-</span></div>
+        <br>
+        <button class="btn-reset" onclick="resetAll()">🔄 پاک کردن همه</button>
+        <button onclick="copyOutput()">📋 کپی خروجی</button>
+        <textarea id="output-area" readonly placeholder="خروجی اینجا نمایش داده می‌شود..."></textarea>
+    </div>
+
+    <script>
+        const mapImage = document.getElementById('map-image');
+        const sceneSelect = document.getElementById('scene-select');
+        const currentCoords = document.getElementById('current-coords');
+        const outputArea = document.getElementById('output-area');
+
+        // ذخیره مختصات
+        const coords = {};
+        const markers = {};
+
+        // تابع برای به‌روزرسانی خروجی
+        function updateOutput() {
+            let text = "const mapCoordinates = {\n";
+            const order = [
+                'scene1', 'scene2', 'reg1', 'reg2', 'reg3', 'reg4', 'reg5', 'reg6',
+                'reg_lib', 'reg_room_path', 'reg_room', 'cafe1', 'cafe2', 'cafe3'
+            ];
+            order.forEach(key => {
+                if (coords[key]) {
+                    text += `    '${key}': { top: '${coords[key].top}%', left: '${coords[key].left}%' },\n`;
+                } else {
+                    text += `    // '${key}': تعریف نشده\n`;
+                }
+            });
+            text += "};";
+            outputArea.value = text;
+        }
+
+        // کلیک روی نقشه
+        mapImage.addEventListener('click', function(e) {
+            const rect = mapImage.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const topPercent = (y / rect.height) * 100;
+            const leftPercent = (x / rect.width) * 100;
+
+            const sceneId = sceneSelect.value;
+
+            // ذخیره مختصات
+            coords[sceneId] = { top: topPercent.toFixed(1), left: leftPercent.toFixed(1) };
+
+            // حذف نشانگر قبلی این صحنه
+            if (markers[sceneId]) {
+                markers[sceneId].remove();
+            }
+
+            // ساخت نشانگر جدید
+            const marker = document.createElement('div');
+            marker.className = `marker ${sceneId}`;
+            marker.style.top = topPercent + '%';
+            marker.style.left = leftPercent + '%';
+            marker.textContent = sceneId.replace('scene', 'S').replace('reg', 'R').replace('cafe', 'C').replace('_lib', 'L').replace('_room_path', 'P').replace('_room', 'R');
+            marker.title = sceneId;
+            
+            document.getElementById('map-container').appendChild(marker);
+            markers[sceneId] = marker;
+
+            // به‌روزرسانی نمایش
+            currentCoords.innerText = `${sceneId} → Top: ${topPercent.toFixed(1)}% , Left: ${leftPercent.toFixed(1)}%`;
+            
+            // به‌روزرسانی خروجی
+            updateOutput();
+        });
+
+        // پاک کردن همه
+        function resetAll() {
+            if (confirm('همه مختصات پاک شوند؟')) {
+                Object.keys(markers).forEach(key => {
+                    markers[key].remove();
+                });
+                Object.keys(coords).forEach(key => {
+                    delete coords[key];
+                });
+                currentCoords.innerText = '-';
+                outputArea.value = '';
+            }
+        }
+
+        // کپی خروجی
+        function copyOutput() {
+            outputArea.select();
+            document.execCommand('copy');
+            alert('خروجی کپی شد!');
+        }
+    </script>
+</body>
+</html>
