@@ -270,40 +270,48 @@
         }
     });
 
-    // ✅ انیمیشن چرخش + زوم + سپس لود
-    function goToScene(targetSceneId, hotspotYaw, hotspotPitch) {
+    // ✅ ذخیره تاریخچه با جهت حرکت
+    let historyStack = []; // آرایه‌ای از {sceneId, yaw, pitch}
+    let isTransitioning = false;
+
+    // مقداردهی اولیه تاریخچه
+    historyStack.push({ sceneId: 'scene1', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+
+    // ✅ تابع انیمیشن چرخش + زوم + لود
+    function goToScene(targetSceneId, targetYaw, targetPitch) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         const currentYaw = viewer.getYaw();
-        const currentPitch = viewer.getPitch();
-        const currentHfov = viewer.getHfov();
         
-        // محاسبه اختلاف زاویه
-        let yawDiff = hotspotYaw - currentYaw;
-        // نرمال‌سازی به بازه -180 تا 180
+        // محاسبه اختلاف زاویه (برای تعیین مدت زمان)
+        let yawDiff = targetYaw - currentYaw;
         while (yawDiff > 180) yawDiff -= 360;
         while (yawDiff < -180) yawDiff += 360;
         
-        // مدت زمان چرخش بر اساس میزان انحراف (۱ تا ۲ ثانیه)
         const absDiff = Math.abs(yawDiff);
-        const duration = Math.min(2000, Math.max(1000, absDiff * 10)); // بین ۱۰۰۰ تا ۲۰۰۰ میلی‌ثانیه
+        // مدت زمان چرخش بین ۱ تا ۲ ثانیه
+        const duration = Math.min(2000, Math.max(1000, absDiff * 10));
         
-        // مرحله ۱: چرخش به سمت هات‌اسپات
-        viewer.setYaw(hotspotYaw, duration);
+        // مرحله ۱: چرخش
+        viewer.setYaw(targetYaw, duration);
         
-        // مرحله ۲: بعد از چرخش، زوم دو برابر و سپس لود
+        // مرحله ۲: زوم و سپس لود
         setTimeout(() => {
+            const currentHfov = viewer.getHfov();
             const newHfov = Math.max(40, currentHfov / 2); // زوم دو برابر
-            viewer.setHfov(newHfov, 800); // ۸۰۰ میلی‌ثانیه برای زوم
+            viewer.setHfov(newHfov, 800);
             
-            // مرحله ۳: بعد از زوم، لود صحنه بعدی
+            // مرحله ۳: لود صحنه بعدی
             setTimeout(() => {
                 viewer.loadScene(targetSceneId);
-                // برگرداندن زوم به حالت عادی بعد از لود
+                // برگرداندن زوم به حالت عادی
                 setTimeout(() => {
-                    viewer.setHfov(currentHfov, 500);
+                    viewer.setHfov(120, 500);
+                    isTransitioning = false;
                 }, 500);
-            }, 900); // صبر تا زوم کامل شود
-            
-        }, duration + 100); // صبر تا چرخش کامل شود
+            }, 900);
+        }, duration + 100);
     }
 
     // ✅ دکمه ادامه
@@ -313,34 +321,32 @@
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
             const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
             if (forwardHotspot) {
+                // ذخیره جهت حرکت فعلی (قبل از رفتن)
+                historyStack.push({ 
+                    sceneId: currentScene, 
+                    yaw: viewer.getYaw(), 
+                    pitch: viewer.getPitch() 
+                });
                 goToScene(forwardHotspot.sceneId, forwardHotspot.yaw, forwardHotspot.pitch);
             }
         }
     });
 
-    // ✅ دکمه بازگشت
+    // ✅ دکمه بازگشت (با استفاده از تاریخچه و چرخش به سمت مخالف)
     document.getElementById('btn-backward').addEventListener('click', function() {
         if (historyStack.length > 1) {
+            // حذف صحنه فعلی از تاریخچه
             historyStack.pop();
-            const prevScene = historyStack[historyStack.length - 1];
-            const scenes = viewer.getConfig().scenes;
+            const prevEntry = historyStack[historyStack.length - 1];
             
-            // پیدا کردن هات‌اسپات صحنه قبلی (برای چرخش)
-            if (scenes[prevScene] && scenes[prevScene].hotSpots) {
-                const prevHotspot = scenes[prevScene].hotSpots.find(hs => hs.type === 'scene');
-                if (prevHotspot) {
-                    goToScene(prevScene, prevHotspot.yaw, prevHotspot.pitch);
-                } else {
-                    viewer.loadScene(prevScene);
-                }
-            } else {
-                viewer.loadScene(prevScene);
-            }
+            // چرخش به سمت مخالف (جهتی که از آن آمده‌ایم)
+            const reverseYaw = prevEntry.yaw + 180;
+            
+            goToScene(prevEntry.sceneId, reverseYaw, prevEntry.pitch);
         }
     });
 
-    let historyStack = ['scene1'];
-
+    // ✅ مختصات دقیق نقشه
     const mapCoordinates = {
         'scene1': { top: '62.4%', left: '31.6%' },
         'scene2': { top: '55.6%', left: '35.1%' },
@@ -362,9 +368,7 @@
     let lastLeft = null;
 
     viewer.on('scenechange', function(sceneId) {
-        if (historyStack[historyStack.length - 1] !== sceneId) {
-            historyStack.push(sceneId);
-        }
+        // به‌روزرسانی نقشه
         const coords = mapCoordinates[sceneId];
         if (coords) {
             const marker = document.getElementById('marker');
