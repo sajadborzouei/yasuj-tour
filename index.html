@@ -268,36 +268,35 @@
         }
     });
 
-    // ✅ دکمه ادامه: رفتن به صحنه بعد و چرخش به سمت مسیر
+    // ✅ دکمه ادامه: رفتن به صحنه بعد + چرخش ۲ ثانیه‌ای به سمت مسیر + زوم
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
             const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
             if (forwardHotspot) {
-                // رفتن به صحنه بعد
                 viewer.loadScene(forwardHotspot.sceneId);
-                // چرخش دوربین به سمت مسیر (مختصات yaw هات‌اسپات)
                 setTimeout(() => {
-                    viewer.setYaw(forwardHotspot.yaw, 1000); // ۱۰۰۰ میلی‌ثانیه انیمیشن
+                    viewer.setYaw(forwardHotspot.yaw, 2000); // چرخش ۲ ثانیه‌ای
+                    viewer.setHfov(60, 2000); // زوم به ۶۰ درجه (نزدیک‌تر)
                 }, 500);
             }
         }
     });
 
-    // ✅ دکمه بازگشت: برگشت به صحنه قبلی و چرخش به سمت مسیر قبلی
+    // ✅ دکمه بازگشت: برگشت به صحنه قبلی + چرخش ۲ ثانیه‌ای + زوم
     document.getElementById('btn-backward').addEventListener('click', function() {
         if (historyStack.length > 1) {
             historyStack.pop();
             const prevScene = historyStack[historyStack.length - 1];
             viewer.loadScene(prevScene);
-            // چرخش به سمت مسیر قبلی (اگر هات‌اسپات داشته باشد)
             setTimeout(() => {
                 const scenes = viewer.getConfig().scenes;
                 if (scenes[prevScene] && scenes[prevScene].hotSpots) {
                     const prevHotspot = scenes[prevScene].hotSpots.find(hs => hs.type === 'scene');
                     if (prevHotspot) {
-                        viewer.setYaw(prevHotspot.yaw, 1000);
+                        viewer.setYaw(prevHotspot.yaw, 2000);
+                        viewer.setHfov(60, 2000);
                     }
                 }
             }, 500);
