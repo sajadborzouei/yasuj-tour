@@ -136,7 +136,9 @@
             "firstScene": "scene1",
             "sceneFadeDuration": 1000,
             "autoLoad": true,
-            "showControls": true
+            "showControls": true,
+            "minHfov": 40,
+            "maxHfov": 120
         },
         "scenes": {
             "scene1": {
@@ -268,38 +270,72 @@
         }
     });
 
-    // ✅ دکمه ادامه: رفتن به صحنه بعد + چرخش ۲ ثانیه‌ای به سمت مسیر + زوم
+    // ✅ انیمیشن چرخش + زوم + سپس لود
+    function goToScene(targetSceneId, hotspotYaw, hotspotPitch) {
+        const currentYaw = viewer.getYaw();
+        const currentPitch = viewer.getPitch();
+        const currentHfov = viewer.getHfov();
+        
+        // محاسبه اختلاف زاویه
+        let yawDiff = hotspotYaw - currentYaw;
+        // نرمال‌سازی به بازه -180 تا 180
+        while (yawDiff > 180) yawDiff -= 360;
+        while (yawDiff < -180) yawDiff += 360;
+        
+        // مدت زمان چرخش بر اساس میزان انحراف (۱ تا ۲ ثانیه)
+        const absDiff = Math.abs(yawDiff);
+        const duration = Math.min(2000, Math.max(1000, absDiff * 10)); // بین ۱۰۰۰ تا ۲۰۰۰ میلی‌ثانیه
+        
+        // مرحله ۱: چرخش به سمت هات‌اسپات
+        viewer.setYaw(hotspotYaw, duration);
+        
+        // مرحله ۲: بعد از چرخش، زوم دو برابر و سپس لود
+        setTimeout(() => {
+            const newHfov = Math.max(40, currentHfov / 2); // زوم دو برابر
+            viewer.setHfov(newHfov, 800); // ۸۰۰ میلی‌ثانیه برای زوم
+            
+            // مرحله ۳: بعد از زوم، لود صحنه بعدی
+            setTimeout(() => {
+                viewer.loadScene(targetSceneId);
+                // برگرداندن زوم به حالت عادی بعد از لود
+                setTimeout(() => {
+                    viewer.setHfov(currentHfov, 500);
+                }, 500);
+            }, 900); // صبر تا زوم کامل شود
+            
+        }, duration + 100); // صبر تا چرخش کامل شود
+    }
+
+    // ✅ دکمه ادامه
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
         if (scenes[currentScene] && scenes[currentScene].hotSpots) {
             const forwardHotspot = scenes[currentScene].hotSpots.find(hs => hs.type === 'scene');
             if (forwardHotspot) {
-                viewer.loadScene(forwardHotspot.sceneId);
-                setTimeout(() => {
-                    viewer.setYaw(forwardHotspot.yaw, 2000); // چرخش ۲ ثانیه‌ای
-                    viewer.setHfov(60, 2000); // زوم به ۶۰ درجه (نزدیک‌تر)
-                }, 500);
+                goToScene(forwardHotspot.sceneId, forwardHotspot.yaw, forwardHotspot.pitch);
             }
         }
     });
 
-    // ✅ دکمه بازگشت: برگشت به صحنه قبلی + چرخش ۲ ثانیه‌ای + زوم
+    // ✅ دکمه بازگشت
     document.getElementById('btn-backward').addEventListener('click', function() {
         if (historyStack.length > 1) {
             historyStack.pop();
             const prevScene = historyStack[historyStack.length - 1];
-            viewer.loadScene(prevScene);
-            setTimeout(() => {
-                const scenes = viewer.getConfig().scenes;
-                if (scenes[prevScene] && scenes[prevScene].hotSpots) {
-                    const prevHotspot = scenes[prevScene].hotSpots.find(hs => hs.type === 'scene');
-                    if (prevHotspot) {
-                        viewer.setYaw(prevHotspot.yaw, 2000);
-                        viewer.setHfov(60, 2000);
-                    }
+            const scenes = viewer.getConfig().scenes;
+            
+            // پیدا کردن هات‌اسپات صحنه قبلی (برای چرخش)
+            if (scenes[prevScene] && scenes[prevScene].hotSpots) {
+                const prevHotspot = scenes[prevScene].hotSpots.find(hs => hs.type === 'scene');
+                if (prevHotspot) {
+                    goToScene(prevScene, prevHotspot.yaw, prevHotspot.pitch);
+                } else {
+                    viewer.loadScene(prevScene);
                 }
-            }, 500);
+            } else {
+                viewer.loadScene(prevScene);
+            }
         }
     });
 
