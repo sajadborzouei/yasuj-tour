@@ -105,7 +105,7 @@
             transform: scale(1.1);
         }
 
-        /* ✅ دکمه‌های ثابت پایین */
+        /* ✅ دکمه‌های ثابت */
         #fixed-buttons {
             position: absolute;
             bottom: 30px;
@@ -216,19 +216,16 @@
                 "panorama": "02_inside_entrance.jpg",
                 "yaw": -60.0,
                 "hotSpots": [
-                    // مسیر به سمت دوشاخه
                     { "pitch": -9.7, "yaw": -60.0, "type": "scene", "text": "", "sceneId": "fork", "cssClass": "invisible-hotspot" }
                 ]
             },
             "fork": {
                 "title": "۳. دوشاخه (انتخاب مسیر)",
                 "type": "equirectangular",
-                "panorama": "03_reg_path_1.jpg", // از این عکس به عنوان دوشاخه استفاده می‌کنیم
+                "panorama": "03_reg_path_1.jpg",
                 "yaw": 9.4,
                 "hotSpots": [
-                    // مسیر ثبت‌نام
                     { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "reg1", "cssClass": "invisible-hotspot" },
-                    // مسیر سلف سرویس
                     { "pitch": -4.1, "yaw": 9.4, "type": "scene", "text": "", "sceneId": "cafe1", "cssClass": "invisible-hotspot" }
                 ]
             },
@@ -350,6 +347,7 @@
 
     historyStack.push({ sceneId: 'scene1', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
 
+    // ✅ تابع انیمیشن
     function goToScene(targetSceneId, targetYaw, targetPitch) {
         if (isTransitioning) return;
         isTransitioning = true;
@@ -379,7 +377,7 @@
         }, duration + 100);
     }
 
-    // ✅ دکمه ادامه (همیشه به جلو در مسیر فعلی)
+    // ✅ دکمه ادامه
     document.getElementById('btn-forward').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         const scenes = viewer.getConfig().scenes;
@@ -393,7 +391,7 @@
         }
     });
 
-    // ✅ دکمه بازگشت (مرحله به مرحله)
+    // ✅ دکمه بازگشت
     document.getElementById('btn-backward').addEventListener('click', function() {
         if (historyStack.length > 1) {
             historyStack.pop();
@@ -405,15 +403,30 @@
         }
     });
 
-    // ✅ دکمه ثبت‌نام
+    // ✅ دکمه ثبت‌نام (با منطق هوشمند)
     document.getElementById('btn-reg').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         
         // اگر در مسیر ثبت‌نام هستیم، کاری نکن
         if (currentScene.startsWith('reg') || currentScene === 'reg_room') return;
         
-        // اگر در مسیر سلف هستیم، ابتدا به دوشاخه برگرد
-        if (currentScene.startsWith('cafe')) {
+        if (currentScene === 'scene1') {
+            // از عکس اول به دوم برو
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('scene2', -60.0, -9.7);
+            setTimeout(() => {
+                historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('fork', 9.4, -4.1);
+                setTimeout(() => {
+                    historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                    goToScene('reg1', 9.4, -4.1);
+                }, 2500);
+            }, 2500);
+            return;
+        }
+        
+        if (currentScene === 'scene2') {
+            // از ورودی به دوشاخه و بعد ثبت‌نام
             historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
             goToScene('fork', 9.4, -4.1);
             setTimeout(() => {
@@ -423,20 +436,38 @@
             return;
         }
         
-        // اگر در دوشاخه یا ورودی هستیم، مستقیماً به reg1 برو
-        historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-        goToScene('reg1', 9.4, -4.1);
+        if (currentScene === 'fork' || currentScene.startsWith('cafe')) {
+            // از دوشاخه یا سلف به ثبت‌نام
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('reg1', 9.4, -4.1);
+            return;
+        }
     });
 
-    // ✅ دکمه سلف سرویس
+    // ✅ دکمه سلف سرویس (با منطق هوشمند)
     document.getElementById('btn-cafe').addEventListener('click', function() {
         const currentScene = viewer.getScene();
         
         // اگر در مسیر سلف هستیم، کاری نکن
         if (currentScene.startsWith('cafe')) return;
         
-        // اگر در مسیر ثبت‌نام هستیم، ابتدا به دوشاخه برگرد
-        if (currentScene.startsWith('reg') || currentScene === 'reg_room') {
+        if (currentScene === 'scene1') {
+            // از عکس اول به دوم برو
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('scene2', -60.0, -9.7);
+            setTimeout(() => {
+                historyStack.push({ sceneId: 'scene2', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                goToScene('fork', 9.4, -4.1);
+                setTimeout(() => {
+                    historyStack.push({ sceneId: 'fork', yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+                    goToScene('cafe1', -42.9, 1.1);
+                }, 2500);
+            }, 2500);
+            return;
+        }
+        
+        if (currentScene === 'scene2') {
+            // از ورودی به دوشاخه و بعد سلف
             historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
             goToScene('fork', 9.4, -4.1);
             setTimeout(() => {
@@ -446,12 +477,15 @@
             return;
         }
         
-        // اگر در دوشاخه یا ورودی هستیم، مستقیماً به cafe1 برو
-        historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
-        goToScene('cafe1', -42.9, 1.1);
+        if (currentScene === 'fork' || currentScene.startsWith('reg')) {
+            // از دوشاخه یا ثبت‌نام به سلف
+            historyStack.push({ sceneId: currentScene, yaw: viewer.getYaw(), pitch: viewer.getPitch() });
+            goToScene('cafe1', -42.9, 1.1);
+            return;
+        }
     });
 
-    // ✅ دکمه خروج (مرحله به مرحله به عقب)
+    // ✅ دکمه خروج (مرحله به مرحله)
     document.getElementById('btn-exit').addEventListener('click', function() {
         if (historyStack.length > 1) {
             historyStack.pop();
